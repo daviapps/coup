@@ -1,0 +1,23 @@
+{
+  "name": "coup",
+  "version": "1.0.0",
+  "description": "Coup Game",
+  "private": true,
+  "author": {
+    "name": "Davi Inácio",
+    "url": "https://github.com/daviinacio"
+  },
+  "workspaces": [
+    "client",
+    "server"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/daviapps/coup.git"
+  },
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/daviapps/coup/issues"
+  },
+  "homepage": "https://github.com/daviapps/coup#readme"
+}
