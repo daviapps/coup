@@ -1,0 +1,12 @@
+.room-slot {
+  /* border: 1px solid var(--colors-primary); */
+  background-color: var(--colors-current-line);
+  padding: 1rem;
+  border-radius: 15px;
+}
+
+.room-slot-title {
+  font-weight: bold;
+  font-size: 16px;
+  text-align: center;
+}

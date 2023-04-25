@@ -1,0 +1,16 @@
+.connection-status-container,
+.connection-status {
+  height: 25px;
+}
+
+.connection-status {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--colors-current-line);
+  position: absolute;
+  left: 0;
+  right: 0;
+  font-size: 14px;
+  font-weight: bold;
+}
