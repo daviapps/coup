@@ -1,7 +1,4 @@
 {
-  "include": [
-    "../common"
-  ],
   "compilerOptions": {
     "baseUrl": "./src",
     /* Visit https://aka.ms/tsconfig to read more about this file */
