@@ -14,3 +14,23 @@
   font-size: 14px;
   font-weight: bold;
 }
+
+.connection-status.status-connecting {
+  background-color: var(--colors-orange);
+  color: var(--colors-current-line);
+}
+
+.connection-status.status-connected {
+  background-color: var(--colors-green);
+  color: var(--colors-current-line);
+}
+
+.connection-status.status-disconnected {
+  background-color: var(--colors-red);
+  color: var(--colors-foreground);
+}
+
+.connection-status.status-error {
+  background-color: var(--colors-red);
+  color: var(--colors-foreground);
+}

@@ -1,9 +1,10 @@
 export type Player = {
   socket_id: string;
   username: string;
-  influences: string[];
-  money: number;
   active: boolean;
+
+  influences?: string[];
+  money?: number;
 }
 
 export type State = {

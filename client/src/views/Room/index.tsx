@@ -1,19 +1,26 @@
-import { useEffect, useState } from "react";
-import { Navigate, useParams, useNavigate } from "react-router-dom"
+import { useCallback, useEffect, useState } from "react";
+import { Navigate, useParams, useNavigate, Link } from "react-router-dom"
 
 import './style.css';
 
-import ConnectionStatus from "../../components/ConnectionStatus";
+import ConnectionStatus, { ConnectionStatusProps } from "../../components/ConnectionStatus";
 import RoomSlot from "../../components/RoomSlot";
-import { State } from "../../lib/types";
+import { JoinCallbackProps, State } from "../../lib/types";
 import createSocket from "../../services/socket-io";
 import PlayerCard from "../../components/PlayerCard";
+import { Socket } from "socket.io-client";
 
 export default function Room(){
   const navigate = useNavigate();
   const { id } = useParams<string>();
-  const [isConnected, setIsConnected] = useState(false);
+  const [socket, setSocket] = useState<Socket | undefined>()
   const [state, setState] = useState<State | null>(null);
+  
+  const [connectionStatus, setConnectionStatus] = useState<ConnectionStatusProps>({
+    status: 'connecting'
+  });
+
+  //useEffect(() => console.log('status changed', connectionStatus), [connectionStatus]);
 
   useEffect(() => {
     const username = localStorage.getItem('username');
@@ -24,37 +31,77 @@ export default function Room(){
     }
 
     const socket = createSocket({
-      query: { username }
+      query: { username, room_id: id }
     });
 
-    socket.emit('join', { room_id: id }, ({ found, state }: { found: boolean, state: State }) => {
-      if(!found) {
-        navigate('/join', {
-          state: { found: false }
+    setSocket(socket);
+
+    socket.emit('join', {}, ({ success, message }: JoinCallbackProps) => {
+      if(!success){
+        socket.disconnect();
+
+        setConnectionStatus({
+          status: success ? 'connected' : 'error',
+          message: message
         });
-        return;
       }
 
-      setState(state);
-      console.log(state);
+      // if(!found) {
+      //   navigate('/join', {
+      //     state: { found: false }
+      //   });
+      //   return;
+      // }
+    });
+    
+    socket.on("reconnect", () => {
+      setConnectionStatus({
+        status: 'connecting',
+        message: 'reconnecting'
+      });
     });
 
     socket.on("connect", () => {
-      setIsConnected(socket.connected);
+      setConnectionStatus({
+        status: 'connecting',
+        message: 'Waiting server response..'
+      });
     });
 
-    socket.on("disconnect", () => {
-      setIsConnected(socket.connected);
+    socket.on("disconnect", (reason) => {
+      console.log('reason', reason);
+      if(reason === "ping timeout"){
+        console.log('Refreshing connection');
+        return;
+      }
+
+      setConnectionStatus({
+        status: 'disconnected'
+      })
     });
     
-    socket.on("state", (state) => {
+    socket.on("state", (state: State) => {
       setState(state);
+
+      setConnectionStatus({
+        status: 'connected',
+        message: `Connected | Room ${(id || '').toUpperCase()}`
+      });
     });
 
     return () => {
+      socket.emit('leave');
       socket.disconnect();
     }
   }, [id, navigate]);
+
+  const handleLeave = useCallback(() => {
+    if(!socket) return;
+
+    socket.emit('leave');
+    socket.disconnect();
+    navigate('/join');
+  }, [socket, navigate]);
 
   if(!id) return (
     <Navigate to='/' />
@@ -62,13 +109,25 @@ export default function Room(){
 
   return (
     <section className="container room-container">
-      <ConnectionStatus isConnected={isConnected}>
-        Conectado | Sala {id.toUpperCase()}
-      </ConnectionStatus>
+      <ConnectionStatus {...connectionStatus} />
 
       {!state && (
         <center className="my-5">
-          <p>Carregando dados da sala..<br />Por favor aguarde um momento..</p>
+          {connectionStatus.status === 'connecting' && (
+            <p>Connecting to the server<br />Please wait..</p>
+          )}
+
+          {connectionStatus.status === 'connected' && (
+            <p>Fetching room data<br />Please wait..</p>
+          )}
+
+          {connectionStatus.status === 'error' && <>
+            <p>Error on fetching room data.</p>
+            <div className="d-flex mt-3 g-3 justify-content-center">
+              <Link to={'/join'}>Join another room</Link>
+              <Link to={'/new'}>Create a room</Link>
+            </div>
+          </>}
         </center>
       )}
 
@@ -93,6 +152,8 @@ export default function Room(){
           </div>
         </div>
       )}
+
+      <a onClick={() => handleLeave()}>Leave Room</a>
     </section>
   )
 }

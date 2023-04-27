@@ -6,6 +6,7 @@ import Room from "models/room";
 
 const app = fastify();
 app.register(fastifyIO, {
+  pingTimeout: 0.1 || 60000,
   cors: {
     origin: "*",
     methods: ["GET", "POST"]
@@ -21,49 +22,81 @@ app.ready().then(() => {
   rooms['xpto'] = new Room(app.io);
 
   app.io.on("connection", (socket) => {
-    /* Player connection */
-    const { username } = socket.handshake.query;
+    const { username, room_id } = socket.handshake.query;
     if(typeof username !== 'string') return;
+    if(typeof room_id !== 'string') return;
 
-    console.log(`User '${username}' [${socket.id}] connected.`);
+    const room = rooms[room_id] || undefined;
+
+    //Try reconnect
+    if(room && room.hasPlayer(username) && !room.findPlayer(username)?.active){
+      room.playerReconnected(socket.id, username);
+      console.log(`User '${username}' [${socket.id}] reconnected.`);
+    }
+    else {
+      console.log(`User '${username}' [${socket.id}] connected.`);
+    }
     
-    socket.on('join', ({ room_id }, callback) => {
+    socket.on('join', ({}, callback) => {
       const room = rooms[room_id];
 
-      if(!room)
-        return callback({ found: false });
+      if(!room){
+        return callback({
+          success: false,
+          message: 'Room not found'
+        });
+      }
 
-      room.playerJoin(socket.id, username);
+      const player = room.findPlayer(username);
+      if(player && player.socket_id !== socket.id){
+        return callback({
+          success: false,
+          message: `Player already active in this room`
+        });
+      }
 
-      callback({ found: true, state: room.state });
+      if(!room.hasPlayer(username)){
+        room.playerJoin(socket.id, username);
+
+        return callback({
+          success: true,
+          message: `Connected | Room ${room_id.toUpperCase()}`
+        });
+      }
+
+      return callback({
+        success: true,
+        message: `Reconnected | Room ${room_id.toUpperCase()}`
+      });
+    });
+
+    socket.on('leave', () => {
+      console.log(`User '${username}' [${socket.id}] leaved.`);
+      room.playerLeave(username);
     });
 
     socket.on('disconnect', () => {
       console.log(`User '${username}' [${socket.id}] disconnected.`);
-
-      const room = Object.values(rooms).find(room => room.hasPlayer(username));
-      if(!room) return;
-
-      room.playerLeave(username);
+      if(room)
+      room.playerDisconnected(socket.id);
     });
   });
 });
 
 app.addHook('preHandler', (req, res, done) => {
-  // example logic for conditionally adding headers
-  //const allowedPaths = ["/some", "/list", "/of", "/paths"];
-  //if (allowedPaths.includes(req.routerPath)) {
+  const allowedPaths = ["/rooms"];
+  if (allowedPaths.includes(req.url) || true) {
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Methods", "*");
     res.header("Access-Control-Allow-Headers",  "*");
-  //}
+  }
 
   const isPreflight = /options/i.test(req.method);
   if (isPreflight) {
     return res.send();
   }
       
-  done();  
+  done();
 });
 
 app.register(routes);

@@ -39,6 +39,14 @@ code {
 }
 
 html,
+body,
+#root,
+section.container {
+  min-height: -webkit-fill-available;
+  height: -webkit-fill-available;
+}
+
+html,
 body {
   background-color: var(--colors-background);
   color: var(--colors-foreground);
@@ -125,6 +133,58 @@ a:hover {
   font-weight: bold;
 }
 
+.form--center {
+  width: 100%;
+  max-width: 350px;
+  margin: auto;
+}
+
+.form--center h1 {
+  font-size: 2rem;
+}
+
+input {
+  background-color: transparent;
+  border: 1px solid var(--colors-current-line);
+  color: var(--colors-foreground);
+  font-size: 16px;
+  border-radius: 5px;
+  padding: 0.5rem 0.75rem;
+
+  -webkit-box-shadow: none;
+  box-shadow: none;
+}
+
+textarea:focus,
+input[type=text]:focus {
+  outline: 2px solid var(--colors-primary);
+  box-shadow: none;
+}
+
+.field-container {
+  display: flex;
+  flex-direction: column;
+  margin: 0.5rem 0;
+}
+
+.field-container label {
+  font-size: 14px;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+}
+
+.field-container input+.validation-error {
+  font-size: 14px;
+  margin-top: 0.5rem;
+  color: var(--colors-red);
+}
+
+.form-link {
+  margin-top: 0.75rem;
+  align-self: center;
+  font-size: 14px;
+}
+
 /* Utils */
 .bg-red {
   background-color: var(--colors-red);
@@ -134,6 +194,21 @@ a:hover {
   background-color: var(--colors-green);
 }
 
+.bg-orange {
+  background-color: var(--colors-orange);
+}
+
+.g-1 {
+  gap: 0.25rem;
+}
+
+.g-2 {
+  gap: 0.5rem;
+}
+
+.g-3 {
+  gap: 1rem
+}
 
 .gy-1 {
   row-gap: 0.25rem;
@@ -145,4 +220,16 @@ a:hover {
 
 .gy-3 {
   row-gap: 1rem
+}
+
+.gx-1 {
+  column-gap: 0.25rem;
+}
+
+.gx-2 {
+  column-gap: 0.5rem;
+}
+
+.gx-3 {
+  column-gap: 1rem
 }

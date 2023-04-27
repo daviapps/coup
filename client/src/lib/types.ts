@@ -9,3 +9,8 @@ export type Player = {
 export type State = {
   players: Player[]
 };
+
+export type JoinCallbackProps = {
+  success: boolean;
+  message: string;
+}
