@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import './style.css';
 
 export type ConnectionStatusProps = {
@@ -5,20 +6,15 @@ export type ConnectionStatusProps = {
   message?: string
 };
 
-const defaultMessages = {
-  'connected': 'Connected with the server',
-  'disconnected': 'Disconnected',
-  'connecting': 'Connecting...',
-  'error': 'Connection error'
-}
-
 export default function ConnectionStatus({
   status, message
 }: ConnectionStatusProps){
+  const { t } = useTranslation();
+
   return (
     <div className="connection-status-container">
       <div className={`connection-status status-${status}`}>
-        <p>{message || defaultMessages[status]}</p>
+        <p>{message || t(`c_conn_status_default_msg_${status}`)}</p>
       </div>
     </div>
   )

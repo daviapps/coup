@@ -1,16 +1,16 @@
-import { useCallback, useEffect, useState } from "react";
+import { MouseEventHandler, useCallback, useEffect, useState } from "react";
 import { Navigate, useParams, useNavigate, Link } from "react-router-dom"
 
-import './style.css';
-
-import ConnectionStatus, { ConnectionStatusProps } from "../../components/ConnectionStatus";
-import RoomSlot from "../../components/RoomSlot";
-import { JoinCallbackProps, State } from "../../lib/types";
-import createSocket from "../../services/socket-io";
-import PlayerCard from "../../components/PlayerCard";
+import ConnectionStatus, { ConnectionStatusProps } from "../components/ConnectionStatus";
+import RoomSlot from "../components/RoomSlot";
+import { JoinCallbackProps, State } from "../lib/types";
+import createSocket from "../services/socket-io";
+import PlayerCard from "../components/PlayerCard";
 import { Socket } from "socket.io-client";
+import { useTranslation } from "react-i18next";
 
 export default function Room(){
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const { id } = useParams<string>();
   const [socket, setSocket] = useState<Socket | undefined>()
@@ -26,6 +26,9 @@ export default function Room(){
     const username = localStorage.getItem('username');
 
     if(!username){
+      if(id)
+        localStorage.setItem('room_id', id);
+
       navigate('/join');
       return;
     }
@@ -42,16 +45,9 @@ export default function Room(){
 
         setConnectionStatus({
           status: success ? 'connected' : 'error',
-          message: message
+          message: t(message) || message
         });
       }
-
-      // if(!found) {
-      //   navigate('/join', {
-      //     state: { found: false }
-      //   });
-      //   return;
-      // }
     });
     
     socket.on("reconnect", () => {
@@ -85,22 +81,22 @@ export default function Room(){
 
       setConnectionStatus({
         status: 'connected',
-        message: `Connected | Room ${(id || '').toUpperCase()}`
+        message: t('room_c_conn_status_default_msg_connected', {
+          room_id: (id || '').toUpperCase()
+        }) || ''
       });
     });
 
     return () => {
-      socket.emit('leave');
       socket.disconnect();
     }
-  }, [id, navigate]);
+  }, [navigate, t, id]);
 
-  const handleLeave = useCallback(() => {
+  const handleLeave = useCallback<MouseEventHandler<HTMLAnchorElement>>((e) => {
     if(!socket) return;
-
+    e.preventDefault();
     socket.emit('leave');
-    socket.disconnect();
-    navigate('/join');
+    setTimeout(() => navigate('/join'), 500);
   }, [socket, navigate]);
 
   if(!id) return (
@@ -113,47 +109,53 @@ export default function Room(){
 
       {!state && (
         <center className="my-5">
-          {connectionStatus.status === 'connecting' && (
-            <p>Connecting to the server<br />Please wait..</p>
+          {connectionStatus.status === 'connected' && (
+            <p>{t('room_status_msg_connected')}</p>
           )}
 
-          {connectionStatus.status === 'connected' && (
-            <p>Fetching room data<br />Please wait..</p>
+          {connectionStatus.status === 'connecting' && (
+            <p>{t('room_status_msg_connecting')}</p>
           )}
 
           {connectionStatus.status === 'error' && <>
-            <p>Error on fetching room data.</p>
-            <div className="d-flex mt-3 g-3 justify-content-center">
-              <Link to={'/join'}>Join another room</Link>
-              <Link to={'/new'}>Create a room</Link>
+            <p>{t('room_status_msg_error')}</p>
+
+            <div className="d-flex g-3 mt-5">
+              <Link to={"/new"} className="btn btn-primary flex-grow-1">{t("new_game")}</Link>
+              <Link to={"/join"} className="btn flex-grow-1">{t("join_game")}</Link>
             </div>
           </>}
         </center>
       )}
 
-      {state && (
+      {state && <>
         <div className="row mt-3 gy-3">
           <div className="col-12 col-md-3">
-            <RoomSlot title="Players">
+            <RoomSlot title={t('room_slot_title_players')}>
               {state.players.map(player => (
                 <PlayerCard key={player.socket_id} player={player} />
               ))}
             </RoomSlot>
           </div>
           <div className="col-12 col-md 6">
-            <RoomSlot title="Ações">
-              Grid Ações
+            <RoomSlot title={t('room_slot_title_actions')}>
+              TODO: Actions Grid
             </RoomSlot>
           </div>
           <div className="col-12 col-md-3">
-            <RoomSlot title="Logs">
-              Lista Log
+            <RoomSlot title={t('room_slot_title_logs')}>
+              TODO: Log List
             </RoomSlot>
           </div>
         </div>
-      )}
-
-      <a onClick={() => handleLeave()}>Leave Room</a>
+        <div className="d-flex mt-3">
+          <Link
+            to={'/join'}
+            className="btn"
+            onClick={(e) => handleLeave(e)}>{t('room_leave')}
+          </Link>
+        </div>
+      </>}
     </section>
   )
 }

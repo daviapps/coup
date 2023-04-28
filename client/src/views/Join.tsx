@@ -1,8 +1,10 @@
 import { FormEventHandler, useCallback, useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Link, useNavigate } from "react-router-dom";
 import api from "../services/api";
 
 export default function Join(){
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [errorMessage, setErrorMessage] = useState<string>('');
   const [room_id, setRoomId] = useState<string>(
@@ -25,20 +27,23 @@ export default function Join(){
     .catch((err) => {
       if(err.response){
         const { message } = err.response.data;
-        setErrorMessage(message);
+        setErrorMessage(t(message) || message);
       }
     });
-  }, [navigate, room_id, username]);
+  }, [navigate, t, room_id, username]);
 
   return (
     <section className="container join-container d-flex">
       <form onSubmit={(e) => handleJoin(e)} className="d-flex flex-column form--center">
-        <center className="mb-3"><h1>Join room</h1></center>
+        <center className="mb-3">
+          <h1>{t("join_game")}</h1>
+          <p>{t("app_developed_by")} <a href="https://github.com/daviinacio">daviinacio</a>.</p>
+        </center>
 
         <div className="field-container">
-          <label>Room ID</label>
+          <label htmlFor="room_id">{t("field_label_room_id")}</label>
           <input
-            id="room"
+            id="room_id"
             value={room_id}
             required
             pattern="^[a-zA-Z0-9]+$"
@@ -52,7 +57,7 @@ export default function Join(){
         </div>
 
         <div className="field-container">
-          <label>Username</label>
+          <label htmlFor="username">{t("field_label_username")}</label>
           <input
             id="username"
             value={username}
@@ -65,9 +70,8 @@ export default function Join(){
           )}
         </div>
 
-        <button type="submit" className="btn btn-primary mt-3">Entrar</button>
-        
-        <Link to={'/new'} className="form-link">Click here to create a new room</Link>
+        <button type="submit" className="btn btn-primary mt-3">{t('join_submit_btn')}</button>
+        <Link to={'/new'} className="form-link">{t('join_under_submit_link')}</Link>
       </form>
     </section>
   )

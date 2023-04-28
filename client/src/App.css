@@ -106,6 +106,7 @@ a:hover {
   border-radius: 25px;
   text-transform: uppercase;
   font-weight: bold;
+  text-align: center;
 }
 
 .btn:hover {
@@ -183,6 +184,11 @@ input[type=text]:focus {
   margin-top: 0.75rem;
   align-self: center;
   font-size: 14px;
+}
+
+.text--body2 {
+  font-size: 12px;
+  text-align: justify;
 }
 
 /* Utils */

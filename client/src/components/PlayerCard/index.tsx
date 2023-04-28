@@ -1,4 +1,5 @@
 import { Player } from 'lib/types';
+import { useTranslation } from 'react-i18next';
 import './style.css';
 
 export type PlayerCardProps = {
@@ -8,6 +9,8 @@ export type PlayerCardProps = {
 export default function PlayerCard({
   player
 }: PlayerCardProps) {
+  const { t } = useTranslation();
+
   return (
     <div className="player-card mt-2">
       {/* <span className='player-avatar'>
@@ -25,7 +28,7 @@ export default function PlayerCard({
         <p>{player.active ? "conectado" : "desconectado"}</p>
       </div> */}
       <p>{player.username}</p>
-      <p>{player.active ? "conectado" : "desconectado"}</p>
+      <p>{t(`c_player_card_active_${player.active}`)}</p>
     </div>
   );
 }

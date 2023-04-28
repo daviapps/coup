@@ -6,7 +6,7 @@ import Room from "models/room";
 
 const app = fastify();
 app.register(fastifyIO, {
-  pingTimeout: 0.1 || 60000,
+  pingTimeout: parseInt(process.env.SOCKET_IO_PING_TIMEOUT || '60000'),
   cors: {
     origin: "*",
     methods: ["GET", "POST"]
@@ -43,7 +43,7 @@ app.ready().then(() => {
       if(!room){
         return callback({
           success: false,
-          message: 'Room not found'
+          message: 'room_not_found'
         });
       }
 
@@ -51,7 +51,7 @@ app.ready().then(() => {
       if(player && player.socket_id !== socket.id){
         return callback({
           success: false,
-          message: `Player already active in this room`
+          message: 'room_player_already_connected'
         });
       }
 
@@ -72,6 +72,7 @@ app.ready().then(() => {
 
     socket.on('leave', () => {
       console.log(`User '${username}' [${socket.id}] leaved.`);
+      if(!room) return;
       room.playerLeave(username);
     });
 
