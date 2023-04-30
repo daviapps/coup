@@ -6,8 +6,8 @@ i18n
   .use(i18nBackend)
   .use(initReactI18next)
   .init({
-    fallbackLng: "pt",
-    lng: "pt",
+    fallbackLng: "en",
+    lng: localStorage.getItem('lang') || navigator.language.split('-')[0],
     interpolation: {
       escapeValue: false,
     },

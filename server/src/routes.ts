@@ -23,7 +23,7 @@ export default function routes(app: FastifyInstance, opts: any, done: Function){
     if(!room){
       res.status(400);
       return {
-        message: 'room_not_found'
+        message: 'global.room_not_found'
       }
     }
 
@@ -31,7 +31,7 @@ export default function routes(app: FastifyInstance, opts: any, done: Function){
     if(player && player.active){
       res.status(400);
       return {
-        message: 'room_player_already_connected'
+        message: 'global.player_already_connected'
       }
     }
 

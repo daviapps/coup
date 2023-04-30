@@ -1,31 +1,69 @@
 {
-  "app_name": "Coup Online",
-  "app_developed_by": "Developed by ",
-  "join_game": "Join Game",
-  "new_game": "New Game",
-  "field_label_room_id": "Room ID",
-  "field_label_username": "Username",
-  "join_submit_btn": "Join",
-  "join_under_submit_link": "Click here to create a new room",
-  "new_submit_btn": "Create",
-  "new_under_submit_link": "Click here to join a room",
-  "room_leave": "Leave Room",
-  "room_player_already_connected": "There's already a player with this username in this room",
-  "room_not_found": "Room not found",
-  "room_slot_title_players": "Players",
-  "room_slot_title_actions": "Actions",
-  "room_slot_title_logs": "Logs",
-  "room_c_conn_status_default_msg_connected": "Connected | Room {{room_id}}",
-  "room_status_msg_connected": "Fetching room data\nPlease wait..",
-  "room_status_msg_connecting": "Connecting to the server\nPlease wait..",
-  "room_status_msg_error": "Error on fetching room data.",
-  "rules_overview": "Influential families in a woefully corrupt city-state are trying to manipulate, bluff and bribe their way into power. Each family has influence over two city leaders, who can defend certain illegal actions in court if they are challenged. However, nobody knows where each family's true influence lies, and incorrectly challenging a family's actions could cause you to lose influence, opening the way for anyone to get away with anything. Whether a family loses all their influence, are assassinated, or a Coup is launched against them, only one family will survive.",
-  "c_conn_status_default_msg_connected": "Connected with the server",
-  "c_conn_status_default_msg_disconnected": "Disconnected",
-  "c_conn_status_default_msg_connecting": "Connecting...",
-  "c_conn_status_default_msg_error": "Connection error",
-  "c_player_card_active_true": "online",
-  "c_player_card_active_false": "offline",
-  "c_chat_input_placeholder": "Type a message here..",
-  "c_chat_send_btn": "Send"
+  "global": {
+    "app_name": "Coup Online",
+    "app_developed_by": "Developed by ",
+    "join_game": "Join Game",
+    "new_game": "New Game",
+    "leave_room": "Leave room",
+    "player_already_connected": "There's already a player with this username in this room",
+    "room_not_found": "Room not found"
+  },
+  "global_fields": {
+    "username": {
+      "label": "Username",
+      "placeholder": "Visible to other players"
+    },
+    "room_id": {
+      "label": "Room ID",
+      "placeholder": "XXXX"
+    }
+  },
+  "views": {
+    "join": {
+      "submit": "Join",
+      "link_new": "Click here to create a new room"
+    },
+    "new": {
+      "submit": "Create",
+      "link_join": "Click here to join a room"
+    },
+    "room": {
+      "slot_players_title": "Players",
+      "slot_actions_title": "Actions",
+      "slot_logs_title": "Log",
+      "status_message_connected": "Connected | Room {{room_id}}",
+      "status_message_waiting_server": "Waiting server response..",
+      "status_message_reconnecting": "Reconnecting to the server",
+      "status_text_message_fetching_data": "Fetching room data\nPlease wait..",
+      "status_text_message_connecting": "Connecting to the server\nPlease wait..",
+      "status_text_message_error": "Error on fetching room data."
+    }
+  },
+  "components": {
+    "chat": {
+      "input_placeholder": "Type a message..",
+      "send_btn": "Send",
+      "player_Joined": "{{sender}} joined the room",
+      "player_left": "{{sender}} left the",
+      "player_reconnected": "{{sender}} reconnected",
+      "player_disconnected": "{{sender}} disconnected"
+    },
+    "player_card": {
+      "active": {
+        "true": "online",
+        "false": "offline"
+      }
+    },
+    "connection_status": {
+      "default_message": {
+        "connected": "Connected with the server",
+        "disconnected": "Disconnected",
+        "connecting": "Connecting...",
+        "error": "Connection error"
+      }
+    }
+  },
+  "rules": {
+    "overview": "Influential families in a woefully corrupt city-state are trying to manipulate, bluff and bribe their way into power. Each family has influence over two city leaders, who can defend certain illegal actions in court if they are challenged. However, nobody knows where each family's true influence lies, and incorrectly challenging a family's actions could cause you to lose influence, opening the way for anyone to get away with anything. Whether a family loses all their influence, are assassinated, or a Coup is launched against them, only one family will survive."
+  }
 }

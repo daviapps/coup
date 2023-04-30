@@ -3,7 +3,7 @@
 .chat-history-container {
   display: flex;
   flex-direction: column;
-  max-height: 100px;
+  max-height: 60vh;
   overflow-x: hidden;
   overflow-y: auto;
   margin: 1rem 0;
@@ -24,7 +24,7 @@
 
 .chat-history-item strong {
   color: var(--colors-primary);
-  margin-right: 0.5rem;
+  margin-right: 0.25rem;
 }
 
 .chat-input-container {

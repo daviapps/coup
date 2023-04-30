@@ -15,6 +15,8 @@ export type JoinCallbackProps = {
 export type LogEvent = {
   origin: string;
   message: string;
+  sender: string;
+  receiver?: string;
 };
 
 export type State = {

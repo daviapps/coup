@@ -1,14 +1,15 @@
 import { MouseEventHandler, useCallback, useEffect, useState } from "react";
 import { Navigate, useParams, useNavigate, Link } from "react-router-dom"
 
-import ConnectionStatus, { ConnectionStatusProps } from "../components/ConnectionStatus";
-import RoomSlot from "../components/RoomSlot";
-import { JoinCallbackProps, State } from "../lib/types";
-import createSocket from "../services/socket-io";
-import PlayerCard from "../components/PlayerCard";
+import ConnectionStatus, { ConnectionStatusProps } from "../../components/ConnectionStatus";
+import RoomSlot from "../../components/RoomSlot";
+import { JoinCallbackProps, State } from "../../lib/types";
+import createSocket from "../../services/socket-io";
+import PlayerCard from "../../components/PlayerCard";
 import { Socket } from "socket.io-client";
 import { useTranslation } from "react-i18next";
-import Chat from "../components/Chat";
+import Chat from "../../components/Chat";
+import Header from "../../components/Header";
 
 export default function Room(){
   const { t } = useTranslation();
@@ -23,8 +24,6 @@ export default function Room(){
   const [connectionStatus, setConnectionStatus] = useState<ConnectionStatusProps>({
     status: 'connecting'
   });
-
-  //useEffect(() => console.log('status changed', connectionStatus), [connectionStatus]);
 
   useEffect(() => {
     if(!username){
@@ -47,7 +46,7 @@ export default function Room(){
 
         setConnectionStatus({
           status: success ? 'connected' : 'error',
-          message: t(message) || message
+          message: message
         });
       }
     });
@@ -55,23 +54,21 @@ export default function Room(){
     socket.on("reconnect", () => {
       setConnectionStatus({
         status: 'connecting',
-        message: 'reconnecting'
+        message: 'views.room.status_message_reconnecting'
       });
     });
 
     socket.on("connect", () => {
       setConnectionStatus({
         status: 'connecting',
-        message: 'Waiting server response..'
+        message: 'views.room.status_message_waiting_server'
       });
     });
 
     socket.on("disconnect", (reason) => {
       console.log('reason', reason);
-      if(reason === "ping timeout"){
-        console.log('Refreshing connection');
+      if(reason === "ping timeout")
         return;
-      }
 
       setConnectionStatus({
         status: 'disconnected'
@@ -83,16 +80,14 @@ export default function Room(){
 
       setConnectionStatus({
         status: 'connected',
-        message: t('room_c_conn_status_default_msg_connected', {
-          room_id: (id || '').toUpperCase()
-        }) || ''
+        message: 'views.room.status_message_connected'
       });
     });
 
     return () => {
       socket.disconnect();
     }
-  }, [navigate, t, id, username]);
+  }, [navigate, id, username]);
 
   const handleLeave = useCallback<MouseEventHandler<HTMLAnchorElement>>((e) => {
     if(!socket) return;
@@ -104,10 +99,9 @@ export default function Room(){
   const handleChatSend = useCallback((message: string) => {
     if(!socket) return;
     socket.emit("log", {
-      origin: username,
       message: message
     });
-  }, [socket, username]);
+  }, [socket]);
 
   if(!id) return (
     <Navigate to='/' />
@@ -115,20 +109,26 @@ export default function Room(){
 
   return (
     <section className="container room-container">
-      <ConnectionStatus {...connectionStatus} />
+      <ConnectionStatus
+        status={connectionStatus.status}
+        message={t(connectionStatus.message || '', {
+          room_id: (id || '').toUpperCase()
+        }) || ''}
+      />
+      <Header />
 
       {!state && (
         <center className="my-5">
           {connectionStatus.status === 'connected' && (
-            <p>{t('room_status_msg_connected')}</p>
+            <p>{t('views.room.status_text_message_fetching_data')}</p>
           )}
 
           {connectionStatus.status === 'connecting' && (
-            <p>{t('room_status_msg_connecting')}</p>
+            <p>{t('views.room.status_text_message_connecting')}</p>
           )}
 
           {connectionStatus.status === 'error' && <>
-            <p>{t('room_status_msg_error')}</p>
+            <p>{t('views.room.status_text_message_error')}</p>
 
             <div className="d-flex g-3 mt-5">
               <Link to={"/new"} className="btn btn-primary flex-grow-1">{t("new_game")}</Link>
@@ -139,21 +139,21 @@ export default function Room(){
       )}
 
       {state && <>
-        <div className="row mt-3 gy-3">
+        <div className="row mt-3 gy-3 flex-grow-1">
           <div className="col-12 col-md-3">
-            <RoomSlot title={t('room_slot_title_players')}>
+            <RoomSlot title={t('views.room.slot_players_title') || ''}>
               {state.players.map(player => (
                 <PlayerCard key={player.socket_id} player={player} />
               ))}
             </RoomSlot>
           </div>
           <div className="col-12 col-md 6">
-            <RoomSlot title={t('room_slot_title_actions')}>
+            <RoomSlot title={t('views.room.slot_actions_title') || ''}>
               TODO: Actions Grid
             </RoomSlot>
           </div>
           <div className="col-12 col-md-3">
-            <RoomSlot title={t('room_slot_title_logs')}>
+            <RoomSlot title={t('views.room.slot_logs_title') || ''}>
               <Chat
                 enabled={connectionStatus.status === 'connected'}
                 history={state.log}
@@ -162,13 +162,14 @@ export default function Room(){
             </RoomSlot>
           </div>
         </div>
-        <div className="d-flex mt-3">
+        
+        <RoomSlot title="" className="d-flex mt-3">
           <Link
             to={'/join'}
             className="btn"
-            onClick={(e) => handleLeave(e)}>{t('room_leave')}
+            onClick={(e) => handleLeave(e)}>{t('global.leave_room')}
           </Link>
-        </div>
+        </RoomSlot>
       </>}
     </section>
   )

@@ -8,7 +8,8 @@
   align-items: center;
   justify-content: center;
   color: var(--colors-current-line);
-  position: absolute;
+  position: fixed;
+  z-index: 100;
   left: 0;
   right: 0;
   font-size: 14px;

@@ -38,12 +38,16 @@ export default function Chat({
         <ul className="chat-history-container" ref={historyContainerRef}>
           {history.map((event, index) => (
             <li key={index} className="chat-history-item">
-              <p>
-                {event.origin !== 'server' && (
+              {event.origin === 'server' && (
+                <p>{t(event.message, event)}</p>
+              )}
+
+              {event.origin !== 'server' && (
+                <p>
                   <strong>{event.origin}</strong>
-                )}
-                {event.message}
-              </p>
+                  {event.message}
+                </p>
+              )}
             </li>
           ))}
         </ul>
@@ -60,13 +64,14 @@ export default function Chat({
           type="text"
           value={message}
           disabled={!enabled}
-          placeholder={t('c_chat_input_placeholder') || ''}
+          placeholder={t('components.chat.input_placeholder') || ''}
           onChange={(e) => setMessage(e.target.value)}
         />
-        {/* <button
+        <button
           type="submit"
           className="btn"
-        >{t('c_chat_send_btn')}</button> */}
+          style={{ display: 'none' }}
+        >{t('components.chat.send_btn')}</button>
       </form>
     </div>
   )

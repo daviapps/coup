@@ -28,7 +28,7 @@ export default function PlayerCard({
         <p>{player.active ? "conectado" : "desconectado"}</p>
       </div> */}
       <p>{player.username}</p>
-      <p>{t(`c_player_card_active_${player.active}`)}</p>
+      <p>{t(`components.player_card.active.${player.active}`)}</p>
     </div>
   );
 }

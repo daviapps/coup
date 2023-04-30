@@ -14,7 +14,7 @@ export default function ConnectionStatus({
   return (
     <div className="connection-status-container">
       <div className={`connection-status status-${status}`}>
-        <p>{message || t(`c_conn_status_default_msg_${status}`)}</p>
+        <p>{message || t(`components.connection_status.default_message.${status}`)}</p>
       </div>
     </div>
   )

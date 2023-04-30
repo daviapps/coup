@@ -44,7 +44,7 @@ app.ready().then(() => {
       if(!room){
         return callback({
           success: false,
-          message: 'room_not_found'
+          message: 'global.room_not_found'
         });
       }
 
@@ -52,7 +52,7 @@ app.ready().then(() => {
       if(player && player.socket_id !== socket.id){
         return callback({
           success: false,
-          message: 'room_player_already_connected'
+          message: 'global.player_already_connected'
         });
       }
 
@@ -71,9 +71,10 @@ app.ready().then(() => {
       });
     });
 
-    socket.on('log', ({ origin, message }: LogEvent) => {
+    socket.on('log', ({ message }: LogEvent) => {
       if(!room) return;
-      room.log(origin.trim(), message.trim(), true);
+      room.log(username.trim(), message.trim());
+      room.notifyState();
     });
 
     socket.on('leave', () => {

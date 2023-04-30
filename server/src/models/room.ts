@@ -27,10 +27,10 @@ export default class Room {
         active: true,
         username: username
       });
-      this.log('server', `${username} joined the room`);
+      this.log('server', 'components.chat.player_Joined', username);
     }
 
-    this.#notifyState();
+    this.notifyState();
   }
 
   playerLeave(username: string){
@@ -38,8 +38,8 @@ export default class Room {
     if(indexOfPlayer === -1) return;
 
     this.state.players.splice(indexOfPlayer, 1);
-    this.log('server', `${username} leaved the room`);
-    this.#notifyState();
+    this.log('server', 'components.chat.player_left', username);
+    this.notifyState();
   }
 
   playerReconnected(socket_id: string, username: string){
@@ -47,16 +47,16 @@ export default class Room {
     if(!player) return;
     player.active = true;
     player.socket_id = socket_id;
-    this.log('server', `${username} reconnected`);
-    this.#notifyState();
+    this.log('server', 'components.chat.player_reconnected', username);
+    this.notifyState();
   }
 
   playerDisconnected(socket_id: string, username: string): void{
     const player = this.state.players.find((p => p.socket_id === socket_id));
     if(!player) return;
     player.active = false;
-    this.log('server', `${username} disconnected`);
-    this.#notifyState();
+    this.log('server', 'components.chat.player_disconnected', username);
+    this.notifyState();
   }
 
   hasPlayer(username: string): boolean {
@@ -67,17 +67,14 @@ export default class Room {
     return this.state.players.find(p => p.username === username);
   }
 
-  log(origin: string, message: string, notify = false){
+  log(origin: string, message: string, sender?: string, receiver?: string){
     if(!message || !origin) return;
     this.state.log.push({
-      origin, message
+      origin, message, sender: sender || origin, receiver
     });
-
-    if(notify)
-      this.#notifyState();
   }
 
-  #notifyState(){
+  notifyState(socket_id?: string){
     for(let player of this.state.players){
       this.io.to(player.socket_id).emit('state', this.state);
     }

@@ -85,25 +85,6 @@ a:hover {
   text-decoration: underline;
 }
 
-.page-header {
-  background-color: var(--colors-primary);
-  position: fixed;
-  top: 0;
-  right: 0;
-  left: 0;
-  height: 42px;
-}
-
-.page-header a {
-  color: var(--colors-current-line);
-}
-
-.page-title {
-  font-weight: bold;
-  text-decoration: none;
-  font-size: 22px;
-}
-
 .wrapper {
   padding-top: 42px;
 }

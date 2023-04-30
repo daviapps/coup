@@ -1,4 +1,5 @@
 .room-slot {
+  /* height: 100%; */
   /* border: 1px solid var(--colors-primary); */
   background-color: var(--colors-current-line);
   padding: 1rem;

@@ -37,17 +37,18 @@ export default function New(){
     <section className="container join-container d-flex">
       <form onSubmit={(e) => handleCreate(e)} className="d-flex flex-column form--center">
         <center className="mb-3">
-          <h1>{t("new_game")}</h1>
-          <p>{t("app_developed_by")} <a href="https://github.com/daviinacio">daviinacio</a>.</p>
+          <h1>{t("global.new_game")}</h1>
+          <p>{t("global.app_developed_by")} <a href="https://github.com/daviinacio">daviinacio</a>.</p>
         </center>
 
         <div className="field-container">
-          <label htmlFor="username">{t("field_label_username")}</label>
+        <label htmlFor="username">{t("global_fields.username.label")}</label>
           <input
             id="username"
             value={username}
             required
             type='text'
+            placeholder={t("global_fields.username.placeholder") || ''}
             onChange={(e) => setUsername(e.target.value)}
           />
           {errorMessage && (
@@ -55,8 +56,8 @@ export default function New(){
           )}
         </div>
 
-        <button type="submit" className="btn btn-primary mt-3">{t('new_submit_btn')}</button>
-        <Link to={'/join'} className="form-link">{t('new_under_submit_link')}</Link>
+        <button type="submit" className="btn btn-primary mt-3">{t('views.new.submit')}</button>
+        <Link to={'/join'} className="form-link">{t('views.new.link_join')}</Link>
       </form>
     </section>
   )
