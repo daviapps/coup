@@ -3,6 +3,7 @@ import fastifyIO from "fastify-socket.io";
 import routes from "./routes";
 import { rooms } from "./lib/global";
 import Room from "models/room";
+import { JoinCallbackProps, LogEvent } from "lib/types";
 
 const app = fastify();
 app.register(fastifyIO, {
@@ -37,7 +38,7 @@ app.ready().then(() => {
       console.log(`User '${username}' [${socket.id}] connected.`);
     }
     
-    socket.on('join', ({}, callback) => {
+    socket.on('join', ({}, callback: (p: JoinCallbackProps) => void) => {
       const room = rooms[room_id];
 
       if(!room){
@@ -70,6 +71,11 @@ app.ready().then(() => {
       });
     });
 
+    socket.on('log', ({ origin, message }: LogEvent) => {
+      if(!room) return;
+      room.log(origin.trim(), message.trim(), true);
+    });
+
     socket.on('leave', () => {
       console.log(`User '${username}' [${socket.id}] leaved.`);
       if(!room) return;
@@ -79,7 +85,7 @@ app.ready().then(() => {
     socket.on('disconnect', () => {
       console.log(`User '${username}' [${socket.id}] disconnected.`);
       if(room)
-      room.playerDisconnected(socket.id);
+      room.playerDisconnected(socket.id, username);
     });
   });
 });

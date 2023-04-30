@@ -8,13 +8,17 @@ import createSocket from "../services/socket-io";
 import PlayerCard from "../components/PlayerCard";
 import { Socket } from "socket.io-client";
 import { useTranslation } from "react-i18next";
+import Chat from "../components/Chat";
 
 export default function Room(){
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { id } = useParams<string>();
+  const [username] = useState<string>(localStorage.getItem('username') || '');
   const [socket, setSocket] = useState<Socket | undefined>()
-  const [state, setState] = useState<State | null>(null);
+  const [state, setState] = useState<State | null>({
+    players: [], log: []
+  });
   
   const [connectionStatus, setConnectionStatus] = useState<ConnectionStatusProps>({
     status: 'connecting'
@@ -23,8 +27,6 @@ export default function Room(){
   //useEffect(() => console.log('status changed', connectionStatus), [connectionStatus]);
 
   useEffect(() => {
-    const username = localStorage.getItem('username');
-
     if(!username){
       if(id)
         localStorage.setItem('room_id', id);
@@ -77,7 +79,7 @@ export default function Room(){
     });
     
     socket.on("state", (state: State) => {
-      setState(state);
+      setState(state);  
 
       setConnectionStatus({
         status: 'connected',
@@ -90,7 +92,7 @@ export default function Room(){
     return () => {
       socket.disconnect();
     }
-  }, [navigate, t, id]);
+  }, [navigate, t, id, username]);
 
   const handleLeave = useCallback<MouseEventHandler<HTMLAnchorElement>>((e) => {
     if(!socket) return;
@@ -99,9 +101,17 @@ export default function Room(){
     setTimeout(() => navigate('/join'), 500);
   }, [socket, navigate]);
 
+  const handleChatSend = useCallback((message: string) => {
+    if(!socket) return;
+    socket.emit("log", {
+      origin: username,
+      message: message
+    });
+  }, [socket, username]);
+
   if(!id) return (
     <Navigate to='/' />
-  )
+  );
 
   return (
     <section className="container room-container">
@@ -144,7 +154,11 @@ export default function Room(){
           </div>
           <div className="col-12 col-md-3">
             <RoomSlot title={t('room_slot_title_logs')}>
-              TODO: Log List
+              <Chat
+                enabled={connectionStatus.status === 'connected'}
+                history={state.log}
+                onSend={handleChatSend}
+              />
             </RoomSlot>
           </div>
         </div>

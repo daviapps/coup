@@ -7,7 +7,18 @@ export type Player = {
   money?: number;
 }
 
+export type JoinCallbackProps = {
+  success: boolean;
+  message: string;
+}
+
+export type LogEvent = {
+  origin: string;
+  message: string;
+};
+
 export type State = {
-  players: Player[]
+  players: Player[];
+  log: LogEvent[];
 };
 

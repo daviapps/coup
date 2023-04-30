@@ -25,5 +25,7 @@
   "c_conn_status_default_msg_connecting": "Conectando...",
   "c_conn_status_default_msg_error": "Falha de conexão",
   "c_player_card_active_true": "online",
-  "c_player_card_active_false": "offline"
+  "c_player_card_active_false": "offline",
+  "c_chat_input_placeholder": "Digite uma mensagem..",
+  "c_chat_send_btn": "Enviar"
 }

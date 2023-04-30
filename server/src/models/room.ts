@@ -9,7 +9,8 @@ export default class Room {
   constructor(io: Server, owner_username?:string){
     this.io = io;
     this.state = {
-      players: []
+      players: [],
+      log: []
     }
   }
 
@@ -26,6 +27,7 @@ export default class Room {
         active: true,
         username: username
       });
+      this.log('server', `${username} joined the room`);
     }
 
     this.#notifyState();
@@ -36,6 +38,7 @@ export default class Room {
     if(indexOfPlayer === -1) return;
 
     this.state.players.splice(indexOfPlayer, 1);
+    this.log('server', `${username} leaved the room`);
     this.#notifyState();
   }
 
@@ -44,13 +47,15 @@ export default class Room {
     if(!player) return;
     player.active = true;
     player.socket_id = socket_id;
+    this.log('server', `${username} reconnected`);
     this.#notifyState();
   }
 
-  playerDisconnected(socket_id: string): void{
+  playerDisconnected(socket_id: string, username: string): void{
     const player = this.state.players.find((p => p.socket_id === socket_id));
     if(!player) return;
     player.active = false;
+    this.log('server', `${username} disconnected`);
     this.#notifyState();
   }
 
@@ -60,6 +65,16 @@ export default class Room {
 
   findPlayer(username: string): Player | undefined {
     return this.state.players.find(p => p.username === username);
+  }
+
+  log(origin: string, message: string, notify = false){
+    if(!message || !origin) return;
+    this.state.log.push({
+      origin, message
+    });
+
+    if(notify)
+      this.#notifyState();
   }
 
   #notifyState(){
