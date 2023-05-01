@@ -17,9 +17,7 @@ export default function Room(){
   const { id } = useParams<string>();
   const [username] = useState<string>(localStorage.getItem('username') || '');
   const [socket, setSocket] = useState<Socket | undefined>()
-  const [state, setState] = useState<State | null>({
-    players: [], log: []
-  });
+  const [state, setState] = useState<State | null>(null);
   
   const [connectionStatus, setConnectionStatus] = useState<ConnectionStatusProps>({
     status: 'connecting'
@@ -75,8 +73,11 @@ export default function Room(){
       })
     });
     
-    socket.on("state", (state: State) => {
-      setState(state);  
+    socket.on("state", (newState: State) => {
+      const keysOfNewState = Object.keys(newState) as Array<keyof typeof newState>;
+      setState((state) => state ? keysOfNewState.reduce<State>((ac, key) => {
+        return { ...ac, [key]: newState[key] };
+      }, state) : newState);
 
       setConnectionStatus({
         status: 'connected',
@@ -92,8 +93,7 @@ export default function Room(){
   const handleLeave = useCallback<MouseEventHandler<HTMLAnchorElement>>((e) => {
     if(!socket) return;
     e.preventDefault();
-    socket.emit('leave');
-    setTimeout(() => navigate('/join'), 500);
+    socket.emit('leave', () => navigate('/join'));
   }, [socket, navigate]);
 
   const handleChatSend = useCallback((message: string) => {
@@ -131,8 +131,8 @@ export default function Room(){
             <p>{t('views.room.status_text_message_error')}</p>
 
             <div className="d-flex g-3 mt-5">
-              <Link to={"/new"} className="btn btn-primary flex-grow-1">{t("new_game")}</Link>
-              <Link to={"/join"} className="btn flex-grow-1">{t("join_game")}</Link>
+              <Link to={"/new"} className="btn btn-primary flex-grow-1">{t("global.new_game")}</Link>
+              <Link to={"/join"} className="btn flex-grow-1">{t("global.join_game")}</Link>
             </div>
           </>}
         </center>

@@ -24,3 +24,19 @@ export type State = {
   log: LogEvent[];
 };
 
+export type RoomInfo = {
+  id: string;
+  player_count: number;
+}
+
+// const sizes = ['xs', 'sm', 'md', 'lg', 'xl'] as const
+
+// type Values = { [K in typeof sizes[number]]: number }
+
+// const values: Values = {
+// 	xs: 0,
+// 	sm: 600,
+// 	md: 960,
+// 	lg: 1280,
+// 	xl: 1920
+// }

@@ -2,7 +2,6 @@ import fastify from "fastify";
 import fastifyIO from "fastify-socket.io";
 import routes from "./routes";
 import { rooms } from "./lib/global";
-import Room from "models/room";
 import { JoinCallbackProps, LogEvent } from "lib/types";
 
 const app = fastify();
@@ -20,26 +19,26 @@ app.register(fastifyIO, {
 
 app.ready().then(() => {
   // Mockup
-  rooms['xpto'] = new Room(app.io);
+  rooms.create(app.io, undefined, 'xpto');
 
   app.io.on("connection", (socket) => {
     const { username, room_id } = socket.handshake.query;
     if(typeof username !== 'string') return;
     if(typeof room_id !== 'string') return;
 
-    const room = rooms[room_id] || undefined;
+    const room = rooms.find(room_id);
 
     //Try reconnect
     if(room && room.hasPlayer(username) && !room.findPlayer(username)?.active){
       room.playerReconnected(socket.id, username);
-      console.log(`User '${username}' [${socket.id}] reconnected.`);
+      //console.log(`User '${username}' [${socket.id}] reconnected.`);
     }
     else {
-      console.log(`User '${username}' [${socket.id}] connected.`);
+      //console.log(`User '${username}' [${socket.id}] connected.`);
     }
     
     socket.on('join', ({}, callback: (p: JoinCallbackProps) => void) => {
-      const room = rooms[room_id];
+      const room = rooms.find(room_id);
 
       if(!room){
         return callback({
@@ -74,17 +73,21 @@ app.ready().then(() => {
     socket.on('log', ({ message }: LogEvent) => {
       if(!room) return;
       room.log(username.trim(), message.trim());
-      room.notifyState();
+      room.notifyState(['log']);
     });
 
-    socket.on('leave', () => {
-      console.log(`User '${username}' [${socket.id}] leaved.`);
+    socket.on('leave', (callback: Function) => {
+      //console.log(`User '${username}' [${socket.id}] leaved.`);
+
+      if(typeof callback === 'function')
+        callback();
+
       if(!room) return;
-      room.playerLeave(username);
+        room.playerLeave(username);
     });
 
     socket.on('disconnect', () => {
-      console.log(`User '${username}' [${socket.id}] disconnected.`);
+      //console.log(`User '${username}' [${socket.id}] disconnected.`);
       if(room)
       room.playerDisconnected(socket.id, username);
     });
@@ -106,6 +109,10 @@ app.addHook('preHandler', (req, res, done) => {
       
   done();
 });
+
+// app.addHook('onResponse', (request, reply, done) => {
+//   done();
+// });
 
 app.register(routes);
 

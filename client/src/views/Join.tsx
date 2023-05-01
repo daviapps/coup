@@ -20,7 +20,7 @@ export default function Join(){
   const handleJoin = useCallback<FormEventHandler>((e) => {
     e.preventDefault();
 
-    api.get(`/rooms/${room_id}?username=${username}`).then(() => {
+    api.post(`/rooms/${room_id}/check`, { username }).then(() => {
       localStorage.setItem('username', username);
       localStorage.setItem('room_id', room_id.toLowerCase());
       navigate(`/room/${room_id.toLowerCase()}`);

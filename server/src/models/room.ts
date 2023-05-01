@@ -30,16 +30,17 @@ export default class Room {
       this.log('server', 'log.player_Joined', username);
     }
 
-    this.notifyState();
+    this.notifyState(['log', 'players']);
   }
 
   playerLeave(username: string){
     const indexOfPlayer = this.state.players.findIndex((p => p.username === username));
     if(indexOfPlayer === -1) return;
 
+    this.io.to(this.state.players[indexOfPlayer].socket_id).disconnectSockets();
     this.state.players.splice(indexOfPlayer, 1);
     this.log('server', 'log.player_left', username);
-    this.notifyState();
+    this.notifyState(['log', 'players']);
   }
 
   playerReconnected(socket_id: string, username: string){
@@ -48,7 +49,7 @@ export default class Room {
     player.active = true;
     player.socket_id = socket_id;
     this.log('server', 'log.player_reconnected', username);
-    this.notifyState();
+    this.notifyState(['log', 'players']);
   }
 
   playerDisconnected(socket_id: string, username: string): void{
@@ -56,7 +57,7 @@ export default class Room {
     if(!player) return;
     player.active = false;
     this.log('server', 'log.player_disconnected', username);
-    this.notifyState();
+    this.notifyState(['log', 'players']);
   }
 
   hasPlayer(username: string): boolean {
@@ -74,9 +75,30 @@ export default class Room {
     });
   }
 
-  notifyState(socket_id?: string){
+  finish(): void {
+    this.#disconnectAll();
+  }
+
+  notifyState(keys?: Array<keyof State>, username_list?: string[]){
+    const keysOfState = Object.keys(this.state) as Array<keyof typeof this.state>;
+    const stateToNotify = keysOfState.reduce<Partial<State>>((ac, key) => {
+      if(keys && !keys.includes(key)) return ac;
+      return { ...ac, [key]: this.state[key] };
+    }, {});
+
+    const playersByUsername = username_list ?
+      this.state.players.filter((p => username_list.includes(p.username))) : [];
+    const playersToNotify = playersByUsername.length > 0 ? 
+      playersByUsername : this.state.players;
+
+    for(let player of playersToNotify){
+      this.io.to(player.socket_id).emit('state', stateToNotify);
+    }
+  }
+
+  #disconnectAll(){
     for(let player of this.state.players){
-      this.io.to(player.socket_id).emit('state', this.state);
+      this.io.to(player.socket_id).disconnectSockets();
     }
   }
 }
