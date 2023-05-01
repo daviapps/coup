@@ -2,6 +2,7 @@ import { FormEventHandler, useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useNavigate } from "react-router-dom";
 import api from "../services/api";
+import Header from "../components/Header";
 
 export default function New(){
   const { t } = useTranslation();
@@ -35,10 +36,12 @@ export default function New(){
 
   return (
     <section className="container join-container d-flex">
+      <Header />
+
       <form onSubmit={(e) => handleCreate(e)} className="d-flex flex-column form--center">
         <center className="mb-3">
           <h1>{t("global.new_game")}</h1>
-          <p>{t("global.app_developed_by")} <a href="https://github.com/daviinacio">daviinacio</a>.</p>
+          <p>{t("global.app_developed_by")} <a href="https://github.com/daviinacio" target="_blank">daviinacio</a>.</p>
         </center>
 
         <div className="field-container">

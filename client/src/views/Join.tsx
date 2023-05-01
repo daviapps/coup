@@ -40,7 +40,7 @@ export default function Join(){
       <form onSubmit={(e) => handleJoin(e)} className="d-flex flex-column form--center">
         <center className="mb-3">
           <h1>{t("global.join_game")}</h1>
-          <p>{t("global.app_developed_by")} <a href="https://github.com/daviinacio">daviinacio</a>.</p>
+          <p>{t("global.app_developed_by")} <a href="https://github.com/daviinacio" target="_blank">daviinacio</a>.</p>
         </center>
 
         <div className="field-container">

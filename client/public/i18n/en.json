@@ -39,14 +39,16 @@
       "status_text_message_error": "Error on fetching room data."
     }
   },
+  "log": {
+    "player_Joined": "{{sender}} joined the room",
+    "player_left": "{{sender}} left the room",
+    "player_reconnected": "{{sender}} reconnected",
+    "player_disconnected": "{{sender}} disconnected"
+  },
   "components": {
     "chat": {
       "input_placeholder": "Type a message..",
-      "send_btn": "Send",
-      "player_Joined": "{{sender}} joined the room",
-      "player_left": "{{sender}} left the",
-      "player_reconnected": "{{sender}} reconnected",
-      "player_disconnected": "{{sender}} disconnected"
+      "send_btn": "Send"
     },
     "player_card": {
       "active": {

@@ -39,14 +39,16 @@
       "status_text_message_error": "Erro ao buscar os dados"
     }
   },
+  "log": {
+    "player_Joined": "{{sender}} entrou na partida",
+    "player_left": "{{sender}} saiu na partida",
+    "player_reconnected": "{{sender}} reconectou",
+    "player_disconnected": "{{sender}} está desconectado"
+  },
   "components": {
     "chat": {
       "input_placeholder": "Digite uma mensagem..",
-      "send_btn": "Enviar",
-      "player_Joined": "{{sender}} entrou na partida",
-      "player_left": "{{sender}} saiu na partida",
-      "player_reconnected": "{{sender}} reconectou",
-      "player_disconnected": "{{sender}} está desconectado"
+      "send_btn": "Enviar"
     },
     "player_card": {
       "active": {

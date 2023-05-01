@@ -27,7 +27,7 @@ export default class Room {
         active: true,
         username: username
       });
-      this.log('server', 'components.chat.player_Joined', username);
+      this.log('server', 'log.player_Joined', username);
     }
 
     this.notifyState();
@@ -38,7 +38,7 @@ export default class Room {
     if(indexOfPlayer === -1) return;
 
     this.state.players.splice(indexOfPlayer, 1);
-    this.log('server', 'components.chat.player_left', username);
+    this.log('server', 'log.player_left', username);
     this.notifyState();
   }
 
@@ -47,7 +47,7 @@ export default class Room {
     if(!player) return;
     player.active = true;
     player.socket_id = socket_id;
-    this.log('server', 'components.chat.player_reconnected', username);
+    this.log('server', 'log.player_reconnected', username);
     this.notifyState();
   }
 
@@ -55,7 +55,7 @@ export default class Room {
     const player = this.state.players.find((p => p.socket_id === socket_id));
     if(!player) return;
     player.active = false;
-    this.log('server', 'components.chat.player_disconnected', username);
+    this.log('server', 'log.player_disconnected', username);
     this.notifyState();
   }
 
