@@ -1,6 +1,6 @@
 import { Player, State } from "lib/types";
 import { getRandomInt } from "lib/utils";
-import { Server } from "socket.io";
+import type { Server } from "socket.io";
 
 export default class Room {
   io: Server;
@@ -66,6 +66,10 @@ export default class Room {
 
   findPlayer(username: string): Player | undefined {
     return this.state.players.find(p => p.username === username);
+  }
+
+  playerCount():number {
+    return this.state.players.length;
   }
 
   log(origin: string, message: string, sender?: string, receiver?: string){

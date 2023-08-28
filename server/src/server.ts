@@ -1,5 +1,7 @@
 import fastify from "fastify";
 import fastifyIO from "fastify-socket.io";
+import { fastifyEnv } from "@fastify/env";
+
 import routes from "./routes";
 import { rooms } from "./lib/global";
 import { JoinCallbackProps, LogEvent } from "lib/types";
@@ -12,6 +14,26 @@ app.register(fastifyIO, {
     methods: ["GET", "POST"]
   }
 });
+
+const schema = {
+  type: 'object',
+  required: ['ROOM_MAX_PLAYERS'],
+  properties: {
+    ROOM_MAX_PLAYERS: {
+      type: 'number',
+      default: 6
+    }
+  }
+}
+
+const options = {
+  confKey: 'config',
+  schema,
+  dotenv: true,
+  data: process.env
+}
+
+app.register(fastifyEnv, options);
 
 // app.get("/", (req, reply) => {
 //   app.io.emit("hello");

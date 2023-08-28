@@ -4,9 +4,12 @@
     "app_developed_by": "Desenvolvido por ",
     "join_game": "Entrar no jogo",
     "new_game": "Criar nova sala",
+    "find_game": "Encontrar sala",
     "leave_room": "Sair da sala",
     "player_already_connected": "Já existe um jogador nessa sala com esse nome",
-    "room_not_found": "Sala não encontrada"
+    "room_full": "Esta sala está cheia",
+    "room_not_found": "Sala não encontrada",
+    "unexpected_error": "Erro inesperado, por favor tente novamente mais tarde"
   },
   "global_fields": {
     "username": {
@@ -21,6 +24,7 @@
   "views": {
     "join": {
       "submit": "Entrar",
+      "find": "Buscar",
       "link_new": "Clique aqui para criar uma nova sala"
     },
     "new": {

@@ -22,3 +22,9 @@ export type State = {
   players: Player[];
   log: LogEvent[];
 };
+
+export type RoomInfo = {
+  id: string;
+  player_count: number;
+  player_max: number;
+}

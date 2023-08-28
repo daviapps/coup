@@ -38,11 +38,13 @@ export const rooms = {
     if(!room) return null;
     return {
       id: room_id,
-      player_count: room.state.players.length
+      player_count: room.state.players.length,
+      player_max: rooms.max()
     };
   },
   list_info: () : RoomInfo[] => {
     return Object.keys(room_list).map((room_id: string) => rooms.info(room_id) as RoomInfo);
-  }
+  },
+  max: ():number => parseInt(process.env.ROOM_MAX_PLAYERS || '0')
 };
 

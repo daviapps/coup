@@ -28,7 +28,10 @@ export default function Join(){
     .catch((err) => {
       if(err.response){
         const { message } = err.response.data;
-        setErrorMessage(message);
+        setErrorMessage(message || 'global.unexpected_error');
+      }
+      else {
+        setErrorMessage('global.unexpected_error');
       }
     });
   }, [navigate, room_id, username]);
@@ -74,7 +77,13 @@ export default function Join(){
           )}
         </div>
 
-        <button type="submit" className="btn btn-primary mt-3">{t('views.join.submit')}</button>
+        
+
+        <div className="d-flex g-3 mt-3">
+          <button type="submit" className="btn btn-primary flex-grow-1">{t('views.join.submit')}</button>
+          <Link to={"/find"} className="btn flex-grow-1">{t("views.join.find")}</Link>
+        </div>
+
         <Link to={'/new'} className="form-link">{t('views.join.link_new')}</Link>
       </form>
     </section>

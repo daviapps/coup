@@ -27,6 +27,7 @@ export type State = {
 export type RoomInfo = {
   id: string;
   player_count: number;
+  player_max: number;
 }
 
 // const sizes = ['xs', 'sm', 'md', 'lg', 'xl'] as const

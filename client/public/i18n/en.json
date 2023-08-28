@@ -4,9 +4,12 @@
     "app_developed_by": "Developed by ",
     "join_game": "Join Game",
     "new_game": "New Game",
+    "find_game": "Find Game",
     "leave_room": "Leave room",
     "player_already_connected": "There's already a player with this username in this room",
-    "room_not_found": "Room not found"
+    "room_full": "This room is full",
+    "room_not_found": "Room not found",
+    "unexpected_error": "Unexpected error, please try again later"
   },
   "global_fields": {
     "username": {
@@ -21,6 +24,7 @@
   "views": {
     "join": {
       "submit": "Join",
+      "find": "Find",
       "link_new": "Click here to create a new room"
     },
     "new": {

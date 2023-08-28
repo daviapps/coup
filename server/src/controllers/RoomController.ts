@@ -48,6 +48,14 @@ async function check(req: FastifyRequest<{ Body: BodyType, Params: ParamsType }>
     }
   }
 
+  if(room.playerCount() >= rooms.max()){
+    res.status(400);
+    return {
+      message: 'global.room_full',
+      error: 'Room full'
+    }
+  }
+
   const player = room.findPlayer(username);
 
   if(player && player.active){

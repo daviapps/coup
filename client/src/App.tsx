@@ -1,12 +1,16 @@
 import { Suspense } from 'react';
 import Routes from './Routes';
+const queryClient = new QueryClient();
 
 import './App.css';
+import { QueryClient, QueryClientProvider } from 'react-query';
 
 function App() {
   return (
     <Suspense fallback={<Loading />}>
-      <Routes />
+      <QueryClientProvider client={queryClient}>
+        <Routes />
+      </QueryClientProvider>
     </Suspense>
   )
 }

@@ -176,7 +176,7 @@ input[type=text]:focus {
   margin-bottom: 0.5rem;
 }
 
-.field-container input+.validation-error {
+.validation-error {
   font-size: 14px;
   margin-top: 0.5rem;
   color: var(--colors-red);
@@ -191,6 +191,37 @@ input[type=text]:focus {
 .text--body2 {
   font-size: 12px;
   text-align: justify;
+}
+
+
+
+table {
+  border-collapse: collapse;
+}
+
+table tr {
+  border: 1px solid var(--colors-current-line);
+}
+
+table thead {
+  color: var(--colors-primary);
+}
+
+table thead th {
+  padding: 0.35rem 0.75rem;
+}
+
+table tbody tr {
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+table tbody tr:hover {
+  background-color: var(--colors-current-line);
+}
+
+table tbody td {
+  padding: 0.5rem 0.75rem;
 }
 
 /* Utils */
