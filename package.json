@@ -13,8 +13,7 @@
   ],
   "scripts": {
     "pre-commit": "yarn build",
-    "build": "yarn workspaces run build",
-    "preinstall": "cp git-pre-commit .git/hooks/pre-commit"
+    "build": "yarn workspaces run build"
   },
   "repository": {
     "type": "git",

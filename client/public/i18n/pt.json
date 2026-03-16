@@ -35,6 +35,7 @@
       "slot_players_title": "Jogadores",
       "slot_actions_title": "Ações",
       "slot_logs_title": "Histórico",
+      "slot_chat_title": "Bate-papo",
       "status_message_connected": "Conectado | Sala {{room_id}}",
       "status_message_waiting_server": "Aguardando resposta do servidor",
       "status_message_reconnecting": "Reconectando ao servidor",

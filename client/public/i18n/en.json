@@ -35,6 +35,7 @@
       "slot_players_title": "Players",
       "slot_actions_title": "Actions",
       "slot_logs_title": "Log",
+      "slot_chat_title": "Chat",
       "status_message_connected": "Connected | Room {{room_id}}",
       "status_message_waiting_server": "Waiting server response..",
       "status_message_reconnecting": "Reconnecting to the server",

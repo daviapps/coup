@@ -1,0 +1,8 @@
+name: Cifras
+services:
+  client:
+    ports:
+      - "3000:80"
+  server:
+    ports:
+      - 3333:3333
