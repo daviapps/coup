@@ -1,0 +1,76 @@
+{
+  "global": {
+    "app_name": "Coup Online",
+    "app_developed_by": "Desenvolvido por ",
+    "join_game": "Entrar no jogo",
+    "new_game": "Criar nova sala",
+    "find_game": "Encontrar sala",
+    "leave_room": "Sair da sala",
+    "player_already_connected": "Já existe um jogador nessa sala com esse nome",
+    "room_full": "Esta sala está cheia",
+    "room_not_found": "Sala não encontrada",
+    "unexpected_error": "Erro inesperado, por favor tente novamente mais tarde"
+  },
+  "global_fields": {
+    "username": {
+      "label": "Nome de usuário",
+      "placeholder": "Visível para os outros jogadores"
+    },
+    "room_id": {
+      "label": "Código da sala",
+      "placeholder": "XXXX"
+    }
+  },
+  "views": {
+    "join": {
+      "submit": "Entrar",
+      "find": "Buscar",
+      "link_new": "Clique aqui para criar uma nova sala"
+    },
+    "new": {
+      "submit": "Criar",
+      "link_join": "Clique aqui para entrar em uma sala"
+    },
+    "room": {
+      "slot_players_title": "Jogadores",
+      "slot_actions_title": "Ações",
+      "slot_logs_title": "Histórico",
+      "slot_chat_title": "Bate-papo",
+      "status_message_connected": "Conectado | Sala {{room_id}}",
+      "status_message_waiting_server": "Aguardando resposta do servidor",
+      "status_message_reconnecting": "Reconectando ao servidor",
+      "status_text_message_fetching_data": "Buscando dados da sala\nPor favor aguarde..",
+      "status_text_message_connecting": "Conectando ao servidor\nPor favor aguarde..",
+      "status_text_message_error": "Erro ao buscar os dados"
+    }
+  },
+  "log": {
+    "player_Joined": "{{sender}} entrou na partida",
+    "player_left": "{{sender}} saiu na partida",
+    "player_reconnected": "{{sender}} reconectou",
+    "player_disconnected": "{{sender}} está desconectado"
+  },
+  "components": {
+    "chat": {
+      "input_placeholder": "Digite uma mensagem..",
+      "send_btn": "Enviar"
+    },
+    "player_card": {
+      "active": {
+        "true": "online",
+        "false": "offline"
+      }
+    },
+    "connection_status": {
+      "default_message": {
+        "connected": "Conectado ao servidor",
+        "disconnected": "Desconectado",
+        "connecting": "Conectando...",
+        "error": "Falha de conexão"
+      }
+    }
+  },
+  "rules": {
+    "overview": "Famílias influentes em uma cidade-estado terrivelmente corrupta estão tentando manipular, blefar e subornar para chegar ao poder. Cada família tem influência sobre dois líderes da cidade, que podem defender certas ações ilegais no tribunal se forem contestadas. No entanto, ninguém sabe onde está a verdadeira influência de cada família, e desafiar incorretamente as ações de uma família pode fazer com que você perca influência, abrindo caminho para qualquer um se safar de qualquer coisa. Quer uma família perca toda a sua influência, seja assassinada ou um golpe seja lançado contra ela, apenas uma família sobreviverá."
+  }
+}

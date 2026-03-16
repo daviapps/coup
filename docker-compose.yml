@@ -1,0 +1,26 @@
+name: Coup
+services:
+  server:
+    build:
+      context: .
+      dockerfile: server/Dockerfile
+    env_file:
+      - .env
+    expose:
+      - "3333"
+
+  client:
+    build:
+      context: .
+      dockerfile: client/Dockerfile
+      args:
+        VITE_SERVER_URL: ${VITE_SERVER_URL:-${SERVICE_URL_SERVER}}
+    environment:
+      VITE_SERVER_URL: ${VITE_SERVER_URL:-${SERVICE_URL_SERVER}}
+    depends_on:
+      - server
+    expose:
+      - "80"
+
+volumes:
+  pgdata:

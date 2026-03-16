@@ -1,27 +1,20 @@
+import { useTranslation } from 'react-i18next';
 import './style.css';
 
-export type ConnectionStatusProps = React.PropsWithChildren<{
-  isConnected: boolean
-}>;
+export type ConnectionStatusProps = {
+  status: 'connecting' | 'connected' | 'disconnected' | 'error';
+  message?: string
+};
 
 export default function ConnectionStatus({
-  isConnected, children
+  status, message
 }: ConnectionStatusProps){
+  const { t } = useTranslation();
+
   return (
     <div className="connection-status-container">
-      <div
-        className={[
-          "connection-status",
-          isConnected ? "bg-green" : 'bg-red'
-        ].join(' ')}
-      >
-        {isConnected && (
-          <p>{children}</p>
-        )}
-
-        {!isConnected && (
-          <p>Desconectado</p>
-        )}
+      <div className={`connection-status status-${status}`}>
+        <p>{message || t(`components.connection_status.default_message.${status}`)}</p>
       </div>
     </div>
   )

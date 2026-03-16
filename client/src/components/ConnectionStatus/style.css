@@ -8,9 +8,30 @@
   align-items: center;
   justify-content: center;
   color: var(--colors-current-line);
-  position: absolute;
+  position: fixed;
+  z-index: 100;
   left: 0;
   right: 0;
   font-size: 14px;
   font-weight: bold;
+}
+
+.connection-status.status-connecting {
+  background-color: var(--colors-orange);
+  color: var(--colors-current-line);
+}
+
+.connection-status.status-connected {
+  background-color: var(--colors-green);
+  color: var(--colors-current-line);
+}
+
+.connection-status.status-disconnected {
+  background-color: var(--colors-red);
+  color: var(--colors-foreground);
+}
+
+.connection-status.status-error {
+  background-color: var(--colors-red);
+  color: var(--colors-foreground);
 }

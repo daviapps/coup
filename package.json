@@ -11,6 +11,10 @@
     "client",
     "server"
   ],
+  "scripts": {
+    "pre-commit": "yarn build",
+    "build": "yarn workspaces run build"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/daviapps/coup.git"
