@@ -1,15 +1,8 @@
-import './style.css';
+import { PropsWithChildren } from "react";
+import * as S from "./styles";
 
-export type TemplateProps = React.PropsWithChildren<{
-  template: string
-}>;
+export type TemplateProps = PropsWithChildren;
 
-export default function Template({
-  children
-}: TemplateProps) {
-  return (
-    <div className="">
-      {children}
-    </div>
-  );
+export function Template({ children }: TemplateProps) {
+  return <S.Wrapper>{children}</S.Wrapper>;
 }

@@ -1,0 +1,9 @@
+{
+  "name": "@coup/shared",
+  "private": true,
+  "version": "1.0.0",
+  "scripts": {
+    "build": "echo \"I don't need to build\""
+  },
+  "license": "MIT"
+}

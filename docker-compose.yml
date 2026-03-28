@@ -1,6 +1,7 @@
 name: Coup
 services:
   server:
+    container_name: coup_server
     build:
       context: .
       dockerfile: server/Dockerfile
@@ -10,6 +11,7 @@ services:
       - "3333"
 
   client:
+    container_name: coup_client
     build:
       context: .
       dockerfile: client/Dockerfile

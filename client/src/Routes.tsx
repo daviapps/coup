@@ -8,7 +8,7 @@ import Room from "./views/Room";
 import PageNotFound from "./views/404";
 
 export default function Router() {
-  return(
+  return (
     <BrowserRouter basename="/">
       <Routes>
         <Route path="/join" element={<Join />} />

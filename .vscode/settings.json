@@ -8,10 +8,5 @@
     "**/Thumbs.db": true,
     "**/node_modules": true
   },
-  "cSpell.words": [
-    "Contessa",
-    "fastify",
-    "preinstall",
-    "tsup"
-  ]
+  "cSpell.words": ["Contessa", "daviapps", "fastify", "preinstall", "tsup"]
 }

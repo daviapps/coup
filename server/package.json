@@ -1,5 +1,5 @@
 {
-  "name": "coup-server",
+  "name": "@coup/server",
   "version": "1.0.0",
   "description": "Server of coup game",
   "private": true,
@@ -13,7 +13,7 @@
   "scripts": {
     "dev": "tsx watch src/server.ts",
     "build": "tsup src",
-    "start": "node dist/server.js"
+    "start": "tsx dist/server.js"
   },
   "license": "MIT",
   "devDependencies": {
@@ -23,10 +23,13 @@
     "typescript": "^5.0.4"
   },
   "dependencies": {
+    "@coup/shared": "*",
     "@fastify/env": "^4.2.0",
     "fastify": "^4.15.0",
     "fastify-socket.io": "^4.0.0",
+    "http-errors-enhanced": "^4.0.2",
     "lib": "^5.1.0",
-    "socket.io": "^4.6.1"
+    "socket.io": "^4.6.1",
+    "winston": "^3.19.0"
   }
 }

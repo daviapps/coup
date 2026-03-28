@@ -1,14 +1,14 @@
 import { useTranslation } from "react-i18next";
 import { LANGUAGES } from "../../lib/constants";
 
-import './style.css';
+import "./style.css";
 
-export default function Header(){
+export default function Header() {
   const { i18n } = useTranslation();
 
   const onChangeLang = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const lang_code = e.target.value;
-    localStorage.setItem('lang', lang_code);
+    localStorage.setItem("lang", lang_code);
     i18n.changeLanguage(lang_code);
   };
 
@@ -25,5 +25,5 @@ export default function Header(){
         </select>
       </div>
     </header>
-  )
+  );
 }
