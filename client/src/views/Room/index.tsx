@@ -8,14 +8,18 @@ import {
 import { useGame } from "@/features/classic-coup";
 import { ChatEntryItem } from "@/features/classic-coup/components/Chat";
 import { useLocalState } from "@daviapps/react-utils";
-import { MessageCircleIcon, XIcon } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { LockIcon, MessageCircleIcon, XIcon } from "lucide-react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Navigate, useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import api from "@/services/api";
+import type { RoomInfo } from "@coup/shared/types";
 import * as S from "./styles";
 
 export default function GameRoom() {
   const { id } = useParams();
+  const { t } = useTranslation();
+
   const [username] = useLocalState<string | undefined>({
     key: "username",
   });
@@ -25,14 +29,124 @@ export default function GameRoom() {
     initialState: id,
   });
 
+  const [password, setPassword] = useState("");
+  const [authorized, setAuthorized] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [needsPassword, setNeedsPassword] = useState(false);
+  const [error, setError] = useState("");
+
   useEffect(() => {
     id && setRoomId(id);
   }, [id, setRoomId]);
 
+  // Check room info on mount — verify password if room is protected
+  useEffect(() => {
+    if (!id) return;
+
+    api
+      .get(`/rooms/${id}`)
+      .then((res) => {
+        const info = res.data as RoomInfo;
+        if (!info.hasPassword) {
+          setAuthorized(true);
+          setLoading(false);
+          return;
+        }
+
+        // Room has password — try stored password
+        const stored = localStorage.getItem("room_password") || "";
+        if (stored) {
+          api
+            .post(`/rooms/${id}/check-password`, { password: stored })
+            .then(() => {
+              setPassword(stored);
+              setAuthorized(true);
+              setLoading(false);
+            })
+            .catch(() => {
+              localStorage.removeItem("room_password");
+              setNeedsPassword(true);
+              setLoading(false);
+            });
+        } else {
+          setNeedsPassword(true);
+          setLoading(false);
+        }
+      })
+      .catch(() => {
+        setError("global.room_not_found");
+        setLoading(false);
+      });
+  }, [id]);
+
+  const handlePasswordSubmit = useCallback(() => {
+    if (!id) return;
+    setError("");
+
+    api
+      .post(`/rooms/${id}/check-password`, { password })
+      .then(() => {
+        localStorage.setItem("room_password", password);
+        setAuthorized(true);
+      })
+      .catch((err) => {
+        if (err.response) {
+          setError(err.response.data.message || "global.unexpected_error");
+        } else {
+          setError("global.unexpected_error");
+        }
+      });
+  }, [id, password]);
+
   if (!id || !username) return <Navigate to="/join" />;
 
+  if (loading) return null;
+
+  if (error && !needsPassword) {
+    return (
+      <S.PasswordGate>
+        <S.PasswordCard>
+          <S.PasswordError>{t(error)}</S.PasswordError>
+        </S.PasswordCard>
+      </S.PasswordGate>
+    );
+  }
+
+  if (needsPassword && !authorized) {
+    return (
+      <S.PasswordGate>
+        <S.PasswordCard>
+          <LockIcon
+            size={32}
+            style={{ alignSelf: "center", color: "var(--colors-comment)" }}
+          />
+          <S.PasswordTitle>{t("global_fields.password.label")}</S.PasswordTitle>
+          <S.PasswordSubtitle>
+            {t("game.password_required", { room: id.toUpperCase() })}
+          </S.PasswordSubtitle>
+          <S.PasswordInput
+            type="password"
+            value={password}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              setPassword(e.target.value)
+            }
+            onKeyDown={(e: React.KeyboardEvent) =>
+              e.key === "Enter" && handlePasswordSubmit()
+            }
+            placeholder="••••••"
+            autoFocus
+          />
+          {error && <S.PasswordError>{t(error)}</S.PasswordError>}
+          <S.PasswordButton onClick={handlePasswordSubmit}>
+            {t("views.join.submit")}
+          </S.PasswordButton>
+        </S.PasswordCard>
+      </S.PasswordGate>
+    );
+  }
+
   return (
-    <SocketProvider roomId={id} username={username}>
+    <SocketProvider roomId={id} username={username} password={password}>
       <RoomContent />
     </SocketProvider>
   );
@@ -126,7 +240,7 @@ function RoomContent() {
               value={message}
               onChange={(e) => setMessage(e.target.value)}
               onKeyDown={handleKeyDown}
-              placeholder={t("components.chat.input_placeholder")}
+              placeholder={t("components.chat.input_placeholder") || ""}
               maxLength={200}
               style={{
                 flex: 1,

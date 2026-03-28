@@ -11,17 +11,26 @@ import {
 import { GameEmitter } from "../emitter";
 
 export const registerHandlers = (io: Server, socket: Socket) => {
-  socket.on("player:join", ({ username, roomId }: PlayerJoinEventPayload) => {
-    if (typeof username !== "string")
-      return GameEmitter.error(socket.id, "Username is mandatory");
-    if (typeof roomId !== "string")
-      return GameEmitter.error(socket.id, "RoomId is mandatory");
+  socket.on(
+    "player:join",
+    ({ username, roomId, password }: PlayerJoinEventPayload) => {
+      if (typeof username !== "string")
+        return GameEmitter.error(socket.id, "Username is mandatory");
+      if (typeof roomId !== "string")
+        return GameEmitter.error(socket.id, "RoomId is mandatory");
 
-    const room = roomManager.findRoomById(roomId);
-    if (!room) return GameEmitter.error(socket.id, "room_not_found");
+      const room = roomManager.findRoomById(roomId);
+      if (!room) return GameEmitter.error(socket.id, "global.room_not_found");
 
-    room.handleJoin(socket, username);
-  });
+      // Allow reconnection without password
+      const existingPlayer = room.findPlayerByUsername(username);
+      if (!existingPlayer && room.password && room.password !== password) {
+        return GameEmitter.error(socket.id, "global.wrong_password");
+      }
+
+      room.handleJoin(socket, username);
+    },
+  );
 
   socket.on("game:start", () => {
     const room = roomManager.findRoomByPlayerSocket(socket);

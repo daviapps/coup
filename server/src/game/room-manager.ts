@@ -13,11 +13,11 @@ class RoomManager {
     }
   }
 
-  public createRoom(owner: string): GameRoom {
+  public createRoom(owner: string, password?: string): GameRoom {
     let room;
 
     do {
-      room = new GameRoom(owner);
+      room = new GameRoom(owner, password);
     } while (this.rooms.get(room.id));
 
     this.rooms.set(room.id, room);

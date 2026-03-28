@@ -31,6 +31,7 @@ export type PlayerChallengeEventPayload = {
 export type PlayerJoinEventPayload = {
   roomId: string;
   username: string;
+  password?: string;
 };
 
 export type PlayerJoinedEventData = {

@@ -9,7 +9,10 @@
     "player_already_connected": "There's already a player with this username in this room",
     "room_full": "This room is full",
     "room_not_found": "Room not found",
-    "unexpected_error": "Unexpected error, please try again later"
+    "unexpected_error": "Unexpected error, please try again later",
+    "game_already_started": "Game already started",
+    "min_players": "At least 3 players required",
+    "wrong_password": "Wrong password"
   },
   "global_fields": {
     "username": {
@@ -19,6 +22,10 @@
     "room_id": {
       "label": "Room ID",
       "placeholder": "XXXX"
+    },
+    "password": {
+      "label": "Password",
+      "placeholder": "Optional"
     }
   },
   "views": {
@@ -30,6 +37,11 @@
     "new": {
       "submit": "Create",
       "link_join": "Click here to join a room"
+    },
+    "find": {
+      "table_code": "Code",
+      "table_players": "Players",
+      "no_rooms": "No rooms available"
     },
     "room": {
       "slot_players_title": "Players",
@@ -93,6 +105,7 @@
     "coins_other": "{{count}} coins",
     "cost": "({{count}} coins)",
     "offline": "offline",
+    "password_required": "Room {{room}} requires a password",
     "action": {
       "INCOME": "Income",
       "FOREIGN_AID": "Foreign Aid",

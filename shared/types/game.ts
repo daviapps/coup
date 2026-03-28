@@ -76,4 +76,5 @@ export type RoomInfo = {
   owner: string;
   playerCount: number;
   phase: GamePhase;
+  hasPassword: boolean;
 };

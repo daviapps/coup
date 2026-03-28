@@ -9,7 +9,10 @@
     "player_already_connected": "Já existe um jogador nessa sala com esse nome",
     "room_full": "Esta sala está cheia",
     "room_not_found": "Sala não encontrada",
-    "unexpected_error": "Erro inesperado, por favor tente novamente mais tarde"
+    "unexpected_error": "Erro inesperado, por favor tente novamente mais tarde",
+    "game_already_started": "A partida já começou",
+    "min_players": "É necessário pelo menos 3 jogadores",
+    "wrong_password": "Senha incorreta"
   },
   "global_fields": {
     "username": {
@@ -19,6 +22,10 @@
     "room_id": {
       "label": "Código da sala",
       "placeholder": "XXXX"
+    },
+    "password": {
+      "label": "Senha",
+      "placeholder": "Opcional"
     }
   },
   "views": {
@@ -30,6 +37,11 @@
     "new": {
       "submit": "Criar",
       "link_join": "Clique aqui para entrar em uma sala"
+    },
+    "find": {
+      "table_code": "Código",
+      "table_players": "Jogadores",
+      "no_rooms": "Nenhuma sala disponível"
     },
     "room": {
       "slot_players_title": "Jogadores",
@@ -93,6 +105,7 @@
     "coins_other": "{{count}} moedas",
     "cost": "({{count}} moedas)",
     "offline": "offline",
+    "password_required": "A sala {{room}} requer uma senha",
     "action": {
       "INCOME": "Renda",
       "FOREIGN_AID": "Ajuda Externa",

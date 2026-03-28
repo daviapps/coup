@@ -12,6 +12,7 @@ export default function routes(
   app.get("/rooms", RoomController.getAllRoomsInfo);
   app.get("/rooms/:roomId", RoomController.getRoomInfo);
   app.post("/rooms/:roomId/analyze", RoomController.analyzeRoom);
+  app.post("/rooms/:roomId/check-password", RoomController.checkPassword);
   app.post("/rooms", RoomController.createRoom);
 
   done();

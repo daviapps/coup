@@ -48,6 +48,7 @@ export const SocketContext = createContext<SocketContextState | null>(null);
 export type SocketProviderProps = PropsWithChildren & {
   username: string;
   roomId: string;
+  password?: string;
   onDisconnect?: () => void;
 };
 
@@ -55,6 +56,7 @@ export function SocketProvider({
   children,
   username,
   roomId,
+  password,
   onDisconnect,
 }: SocketProviderProps) {
   const [state, dispatch] = useReducer(gameReducer, initialState);
@@ -76,69 +78,70 @@ export function SocketProvider({
 
   useEffect(() => {
     if (!socket) return;
-    socket.on("game:sync", (data: SyncEventData) => {
-      console.debug("game:sync", data);
+
+    const onSync = (data: SyncEventData) => {
       dispatch({ type: "SYNC", data });
-    });
-
-    socket.on("player:joined", (data: PlayerJoinedEventData) => {
-      console.debug("player:joined", data);
+    };
+    const onPlayerJoined = (data: PlayerJoinedEventData) => {
       dispatch({ type: "PLAYER_JOINED", data });
-    });
-
-    socket.on("player:leaved", (data: PlayerLeavedEventData) => {
-      console.debug("player:leaved", data);
+    };
+    const onPlayerLeaved = (data: PlayerLeavedEventData) => {
       dispatch({ type: "PLAYER_LEAVED", data });
-    });
-
-    socket.on("player:disconnected", (data: PlayerDisconnectedEventData) => {
-      console.debug("player:disconnected", data);
+    };
+    const onPlayerDisconnected = (data: PlayerDisconnectedEventData) => {
       dispatch({ type: "PLAYER_DISCONNECTED", data });
-    });
-
-    socket.on("player:reconnected", (data: PlayerReconnectedEventData) => {
-      console.debug("player:reconnected", data);
+    };
+    const onPlayerReconnected = (data: PlayerReconnectedEventData) => {
       dispatch({ type: "PLAYER_RECONNECTED", data });
-    });
-
-    socket.on("room:log", (data: LogEventData) => {
-      console.debug("room:log", data);
+    };
+    const onRoomLog = (data: LogEventData) => {
       dispatch({ type: "ROOM_LOG", data });
-    });
-
-    socket.on("chat:message", (data: LogEventData) => {
-      console.debug("chat:message", data);
+    };
+    const onChatMessage = (data: LogEventData) => {
       dispatch({ type: "CHAT_MESSAGE", data });
-    });
+    };
+    const onAnnouncement = ({ message }: ServerAnnouncementEventData) => {
+      toast.info(t(message), { autoClose: 1000 });
+    };
+    const onError = ({ message }: ErrorEventData) => {
+      toast.error(t(message) || message, { autoClose: 1000 });
+    };
+    const onDisconnectEvent = () => {
+      onDisconnect?.();
+    };
 
-    socket.on(
-      "server:announcement",
-      ({ message }: ServerAnnouncementEventData) => {
-        console.debug("server:announcement", t(message));
-        toast.info(message, {
-          autoClose: 1000,
-        });
-      },
-    );
+    socket.on("game:sync", onSync);
+    socket.on("player:joined", onPlayerJoined);
+    socket.on("player:leaved", onPlayerLeaved);
+    socket.on("player:disconnected", onPlayerDisconnected);
+    socket.on("player:reconnected", onPlayerReconnected);
+    socket.on("room:log", onRoomLog);
+    socket.on("chat:message", onChatMessage);
+    socket.on("server:announcement", onAnnouncement);
+    socket.on("error", onError);
+    socket.on("disconnect", onDisconnectEvent);
 
-    socket.on("error", ({ message }: ErrorEventData) => {
-      console.debug("error", message);
-      toast.error(message || "Unknown error", {
-        autoClose: 1000,
-      });
-    });
-
-    socket.on("disconnect", () => {
-      onDisconnect && onDisconnect();
-    });
+    return () => {
+      socket.off("game:sync", onSync);
+      socket.off("player:joined", onPlayerJoined);
+      socket.off("player:leaved", onPlayerLeaved);
+      socket.off("player:disconnected", onPlayerDisconnected);
+      socket.off("player:reconnected", onPlayerReconnected);
+      socket.off("room:log", onRoomLog);
+      socket.off("chat:message", onChatMessage);
+      socket.off("server:announcement", onAnnouncement);
+      socket.off("error", onError);
+      socket.off("disconnect", onDisconnectEvent);
+    };
   }, [socket, t, onDisconnect]);
 
   const handleJoin = useCallback<SocketContextState["join"]>(() => {
     socket?.emit("player:join", {
       roomId: roomId,
       username: username,
+      password: password || undefined,
     } satisfies PlayerJoinEventPayload);
-  }, [roomId, socket, username]);
+  }, [roomId, socket, username, password]);
 
   const handleStart = useCallback<SocketContextState["start"]>(() => {
     socket?.emit("game:start");

@@ -13,13 +13,15 @@ import { GAME_ACTIONS } from "@coup/shared/rules";
 
 export class GameRoom {
   public id = generateSimpleIdentifier().toUpperCase();
+  public password?: string;
   private timeoutId?: NodeJS.Timeout;
   private afterDiscardCallback?: () => void;
 
   private state;
 
-  constructor(owner: string) {
+  constructor(owner: string, password?: string) {
     this.state = new GameState(owner);
+    this.password = password?.trim() || undefined;
   }
 
   private log(serverMessage: string, data?: LogData) {
@@ -61,6 +63,7 @@ export class GameRoom {
       owner: this.state.owner,
       playerCount: this.playerCount(),
       phase: this.state.phase,
+      hasPassword: !!this.password,
     };
   }
 
@@ -747,9 +750,9 @@ export class GameRoom {
         sender: sender.username,
       };
 
-      // Public: store and broadcast
+      // Public: store and emit via room:log (same pipeline as game logs)
       this.state.log(logEntry);
-      GameEmitter.chatRoom(this.id, logEntry);
+      GameEmitter.logRoom(this.id, logEntry);
     }
   }
 

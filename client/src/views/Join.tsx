@@ -1,17 +1,17 @@
-import { useCallback, useEffect, useState } from "react";
+import { FormEventHandler, useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useNavigate } from "react-router-dom";
 import api from "../services/api";
-import Header from "../components/Header";
 import { useLocalState } from "@daviapps/react-utils";
+import { LANGUAGES } from "@/lib/constants";
+import * as S from "./lobby-styles";
 
 export default function Join() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const navigate = useNavigate();
   const [errorMessage, setErrorMessage] = useState<string>("");
-  // const [roomId, setRoomId] = useState<string>(
-  //   (localStorage.getItem("roomId") || "").toUpperCase(),
-  // );
+  const [password, setPassword] = useState("");
+
   const [username, setUsername] = useLocalState<string | undefined>({
     key: "username",
   });
@@ -27,9 +27,13 @@ export default function Join() {
       e.preventDefault();
 
       api
-        .post(`/rooms/${roomId}/analyze`, { username })
+        .post(`/rooms/${roomId}/analyze`, {
+          username,
+          password: password || undefined,
+        })
         .then(() => {
           setUsername(username);
+          localStorage.setItem("room_password", password || "");
           navigate(`/room/${(roomId || "").toUpperCase()}`);
         })
         .catch((err) => {
@@ -45,27 +49,22 @@ export default function Join() {
   );
 
   return (
-    <section className="container join-container d-flex">
-      <Header />
+    <S.Page>
+      <S.Card as="form" onSubmit={handleJoin}>
+        <S.Title>{t("global.join_game")}</S.Title>
+        <S.Subtitle>
+          {t("global.app_developed_by")}
+          <a
+            href={`${location.protocol}//${location.hostname.split(".").splice(-2).join(".")}`}
+            target="_blank"
+          >
+            {location.hostname.split(".")[1]}
+          </a>
+        </S.Subtitle>
 
-      <form
-        onSubmit={(e) => handleJoin(e)}
-        className="d-flex flex-column form--center"
-      >
-        <center className="mb-3">
-          <h1>{t("global.join_game")}</h1>
-          <p>
-            {t("global.app_developed_by")}{" "}
-            <a href="https://github.com/daviinacio" target="_blank">
-              daviinacio
-            </a>
-            .
-          </p>
-        </center>
-
-        <div className="field-container">
-          <label htmlFor="roomId">{t("global_fields.room_id.label")}</label>
-          <input
+        <S.FieldGroup>
+          <S.Label htmlFor="roomId">{t("global_fields.room_id.label")}</S.Label>
+          <S.Input
             id="roomId"
             value={roomId}
             required
@@ -79,11 +78,13 @@ export default function Join() {
               )
             }
           />
-        </div>
+        </S.FieldGroup>
 
-        <div className="field-container">
-          <label htmlFor="username">{t("global_fields.username.label")}</label>
-          <input
+        <S.FieldGroup>
+          <S.Label htmlFor="username">
+            {t("global_fields.username.label")}
+          </S.Label>
+          <S.Input
             id="username"
             value={username}
             required
@@ -91,24 +92,54 @@ export default function Join() {
             placeholder={t("global_fields.username.placeholder") || ""}
             onChange={(e) => setUsername(e.target.value)}
           />
-          {errorMessage && (
-            <span className="validation-error">{t(errorMessage)}</span>
-          )}
-        </div>
+        </S.FieldGroup>
 
-        <div className="d-flex g-3 mt-3">
-          <button type="submit" className="btn btn-primary flex-grow-1">
+        <S.FieldGroup>
+          <S.Label htmlFor="password">
+            {t("global_fields.password.label")}
+          </S.Label>
+          <S.Input
+            id="password"
+            value={password}
+            type="password"
+            placeholder={t("global_fields.password.placeholder") || ""}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+        </S.FieldGroup>
+
+        {errorMessage && <S.ErrorMessage>{t(errorMessage)}</S.ErrorMessage>}
+
+        <S.ButtonRow>
+          <S.PrimaryButton type="submit">
             {t("views.join.submit")}
-          </button>
-          <Link to={"/find"} className="btn flex-grow-1">
+          </S.PrimaryButton>
+          <S.SecondaryButton
+            as={Link}
+            to="/find"
+            style={{ textAlign: "center", textDecoration: "none" }}
+          >
             {t("views.join.find")}
-          </Link>
-        </div>
+          </S.SecondaryButton>
+        </S.ButtonRow>
 
-        <Link to={"/new"} className="form-link">
-          {t("views.join.link_new")}
-        </Link>
-      </form>
-    </section>
+        <S.FormLink>
+          <Link to="/new">{t("views.join.link_new")}</Link>
+        </S.FormLink>
+      </S.Card>
+
+      <S.LangSelector
+        defaultValue={i18n.language}
+        onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
+          localStorage.setItem("lang", e.target.value);
+          i18n.changeLanguage(e.target.value);
+        }}
+      >
+        {LANGUAGES.map(({ code, label }) => (
+          <option key={code} value={code}>
+            {label}
+          </option>
+        ))}
+      </S.LangSelector>
+    </S.Page>
   );
 }

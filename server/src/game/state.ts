@@ -187,13 +187,13 @@ export class GameState {
   }
 
   public startMatch() {
-    if (this.phase !== "LOBBY") return "Game already started";
+    if (this.phase !== "LOBBY") return "global.game_already_started";
 
     this.players.forEach((player, key) => {
       if (!player.active) this.players.delete(key);
     });
 
-    if (this.players.size < 3) return "Its required at least 3 players";
+    if (this.players.size < 3) return "global.min_players";
 
     this.bank = 54;
 
