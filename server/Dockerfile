@@ -11,7 +11,7 @@ RUN yarn install --frozen-lockfile
 COPY server ./server
 COPY shared ./shared
 
-RUN yarn build
+RUN yarn workspace @coup/server run build
 
 # --- RUNNER STAGE ---
 FROM node:22-alpine AS runner

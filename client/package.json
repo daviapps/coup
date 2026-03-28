@@ -12,6 +12,7 @@
   "dependencies": {
     "@coup/shared": "*",
     "@daviapps/node-utils": "^0.0.1",
+    "@daviapps/react-utils": "^0.0.21",
     "axios": "^1.13.6",
     "i18next": "^22.4.15",
     "i18next-http-backend": "^2.2.0",

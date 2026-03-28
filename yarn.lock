@@ -35,6 +35,11 @@
   resolved "https://registry.yarnpkg.com/@daviapps/node-utils/-/node-utils-0.0.1.tgz#ccbbe8bf380ec47e7f7c933577feadc0d9b0805b"
   integrity sha512-meKLFMYW4bMMf38nXY34Q7gX8ZqNE99YiqRZgYuVPr1GqwaOj5B12ydqexkPSiuHa0EtVElziHA8xufaukrLSg==
 
+"@daviapps/react-utils@^0.0.21":
+  version "0.0.21"
+  resolved "https://registry.yarnpkg.com/@daviapps/react-utils/-/react-utils-0.0.21.tgz#bb32748bdd735908d0ebdbe8dbf7c33941ef8dab"
+  integrity sha512-A77HZFKg4X4PaPxhe/iZTjW6/lKvaO17l3c+w/SHHuC9NgnmeYDn13i1zsefwebzSE8xPuv/3bamBdjTxnJHnQ==
+
 "@emotion/is-prop-valid@1.4.0":
   version "1.4.0"
   resolved "https://registry.yarnpkg.com/@emotion/is-prop-valid/-/is-prop-valid-1.4.0.tgz#e9ad47adff0b5c94c72db3669ce46de33edf28c0"
@@ -3316,7 +3321,7 @@ strip-json-comments@^3.1.0, strip-json-comments@^3.1.1:
   resolved "https://registry.yarnpkg.com/strip-json-comments/-/strip-json-comments-3.1.1.tgz#31f1281b3832630434831c310c01cccda8cbe006"
   integrity sha512-6fPc+R4ihwqP6N/aIv2f1gMH8lOVtWQHoqC4yK6oSDVVocumAsfCqjkXnqiYMhmMwS/mEHLp7Vehlt3ql6lEig==
 
-styled-components@^6.3.11:
+styled-components@^6, styled-components@^6.3.11:
   version "6.3.12"
   resolved "https://registry.yarnpkg.com/styled-components/-/styled-components-6.3.12.tgz#263a1c52bd1c5d1cdd2667e9605e5ffa8df592d0"
   integrity sha512-hFR6xsVkVYbsdcUlzPYFvFfoc6o2KlV0VvgRIQwSYMtdThM7SCxnjX9efh/cWce2kTq16I/Kl3xM98xiLptsXA==

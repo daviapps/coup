@@ -13,7 +13,7 @@ ENV VITE_SERVER_URL=${VITE_SERVER_URL}
 COPY client ./client
 COPY shared ./shared
 
-RUN yarn build
+RUN yarn workspace @coup/client run build
 
 FROM nginx:alpine AS runner
 COPY --from=builder /app/client/dist /usr/share/nginx/html
