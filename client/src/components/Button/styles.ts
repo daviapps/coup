@@ -10,6 +10,7 @@ export const Wrapper = styled.button`
   justify-content: center;
   gap: 8px;
   text-transform: uppercase;
+  transition: transform 0.15s ease, filter 0.15s ease, box-shadow 0.15s ease;
 
   &[data-variant="default"] {
     border-radius: 5px;
@@ -28,14 +29,20 @@ export const Wrapper = styled.button`
 
   &[data-disabled="true"] {
     opacity: 0.5;
+    cursor: not-allowed;
+    transform: none !important;
   }
 
-  &:hover {
+  &:hover:not([data-disabled="true"]) {
     filter: brightness(110%);
+    transform: translateY(-1px);
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.25);
   }
 
-  &:active {
+  &:active:not([data-disabled="true"]) {
     filter: brightness(90%);
+    transform: translateY(1px) scale(0.98);
+    box-shadow: none;
   }
 
   svg {

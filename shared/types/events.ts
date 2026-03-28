@@ -15,6 +15,15 @@ export type PlayerBlockEventPayload = {
   character: Character;
 };
 
+export type PlayerDiscardEventPayload = {
+  cardIndex: number;
+};
+
+export type ChatMessageEventPayload = {
+  message: string;
+  targetUsername?: string;
+};
+
 export type PlayerChallengeEventPayload = {
   challenge: boolean;
 };

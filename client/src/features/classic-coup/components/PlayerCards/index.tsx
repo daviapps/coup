@@ -1,5 +1,6 @@
 import { Separator } from "@/components/Separator";
 import { Fragment } from "react";
+import { useTranslation } from "react-i18next";
 import { useGame } from "../../hooks/use-game";
 import { InfluenceCard } from "../InfluenceCard";
 import * as S from "./styles";
@@ -7,18 +8,22 @@ import { CoinsIcon } from "lucide-react";
 
 export function PlayerCards() {
   const { state, socketId } = useGame();
+  const { t } = useTranslation();
 
   return (
     <S.Wrapper>
-      {/* <S.Title>Players</S.Title> */}
       {state.players.map((it, i, arr) => (
         <Fragment key={it.id}>
           <S.Player
             data-current={String(state.currentTurn === it.id)}
             data-myself={String(state.currentTurn === socketId)}
+            data-eliminated={String(
+              it.cards.length > 0 && it.cards.every((c) => c.revealed),
+            )}
           >
             <S.PlayerName $active={it.active}>
-              {it.username} <span>{it.active ? "" : "(offline)"}</span>
+              {it.username}{" "}
+              {!it.active && <span>({t("game.offline")})</span>}
             </S.PlayerName>
 
             <S.CardDeck>
@@ -36,7 +41,7 @@ export function PlayerCards() {
             {it.coins > 0 && (
               <S.PlayerCoins>
                 <CoinsIcon />
-                {it.coins} coin{it.coins > 1 && "s"}
+                {t("game.coins", { count: it.coins })}
               </S.PlayerCoins>
             )}
           </S.Player>

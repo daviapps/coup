@@ -4,7 +4,7 @@ import { useQuery } from "react-query";
 import { Link, useNavigate } from "react-router-dom";
 import Header from "../components/Header";
 import api from "../services/api";
-import { RoomInfo } from "@coup/shared/types";
+import type { RoomInfo } from "@coup/shared/types";
 
 export default function Find() {
   const { t } = useTranslation();

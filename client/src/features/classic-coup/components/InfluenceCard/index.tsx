@@ -1,6 +1,7 @@
-import { Character } from "@coup/shared/types";
+import type { Character } from "@coup/shared/types";
 import * as S from "./styles";
-import { ReactNode } from "react";
+import type { ReactNode } from "react";
+import { useTranslation } from "react-i18next";
 import {
   AnchorIcon,
   CrossIcon,
@@ -23,23 +24,15 @@ export interface InfluenceCardProps {
 }
 
 export function InfluenceCard({ character, revealed }: InfluenceCardProps) {
+  const { t } = useTranslation();
+
   return (
     <S.Wrapper
       data-character={character || "UNKNOWN"}
       data-revealed={revealed ? "true" : "false"}
     >
       {character ? characterIcon[character] : "?"}
-      <span>{character}</span>
-
-      {/* {character ? (
-        <span>
-          {character.split("").map((it, i) => (
-            <span key={i}>{it}</span>
-          ))}
-        </span>
-      ) : (
-        "?"
-      )} */}
+      <span>{character ? t(`game.character.${character}`) : ""}</span>
     </S.Wrapper>
   );
 }

@@ -1,8 +1,33 @@
 import { media } from "@/styles/media";
-import styled from "styled-components";
+import styled, { keyframes } from "styled-components";
+
+const flipReveal = keyframes`
+  0% {
+    transform: rotateY(0deg);
+    filter: brightness(1);
+  }
+  50% {
+    transform: rotateY(90deg);
+    filter: brightness(1.5);
+  }
+  100% {
+    transform: rotateY(0deg);
+    filter: brightness(1);
+  }
+`;
+
+const cardAppear = keyframes`
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+`;
 
 export const Wrapper = styled.div`
-  /* background-color: red; */
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
@@ -12,6 +37,8 @@ export const Wrapper = styled.div`
   border-radius: 12px;
   border-width: 3px;
   border-style: solid;
+  transition: opacity 0.4s ease, box-shadow 0.3s ease;
+  animation: ${cardAppear} 0.3s ease-out;
 
   svg {
     transition:
@@ -45,7 +72,8 @@ export const Wrapper = styled.div`
   }
 
   &[data-revealed="true"] {
-    opacity: 0.4;
+    opacity: 0.35;
+    animation: ${flipReveal} 0.5s ease-out;
   }
 
   &[data-character="UNKNOWN"] {

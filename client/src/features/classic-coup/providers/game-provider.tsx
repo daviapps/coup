@@ -1,11 +1,13 @@
 import createSocket from "@/services/socket-io";
 import {
+  ChatMessageEventPayload,
   ErrorEventData,
   GameSnapshot,
   LogEventData,
   PlayerActionEventPayload,
   PlayerBlockEventPayload,
   PlayerChallengeEventPayload,
+  PlayerDiscardEventPayload,
   PlayerDisconnectedEventData,
   PlayerJoinedEventData,
   PlayerJoinEventPayload,
@@ -31,9 +33,12 @@ type SocketContextState = {
   state: GameSnapshot;
   join: () => void;
   start: () => void;
+  restart: () => void;
   action: (payload: PlayerActionEventPayload) => void;
   block: (payload: PlayerBlockEventPayload) => void;
   challenge: (payload: PlayerChallengeEventPayload) => void;
+  discard: (payload: PlayerDiscardEventPayload) => void;
+  sendChatMessage: (message: string, targetUsername?: string) => void;
   socketId: string;
   myTurn: boolean;
 };
@@ -101,6 +106,11 @@ export function SocketProvider({
       dispatch({ type: "ROOM_LOG", data });
     });
 
+    socket.on("chat:message", (data: LogEventData) => {
+      console.debug("chat:message", data);
+      dispatch({ type: "CHAT_MESSAGE", data });
+    });
+
     socket.on(
       "server:announcement",
       ({ message }: ServerAnnouncementEventData) => {
@@ -134,6 +144,10 @@ export function SocketProvider({
     socket?.emit("game:start");
   }, [socket]);
 
+  const handleRestart = useCallback<SocketContextState["restart"]>(() => {
+    socket?.emit("game:restart");
+  }, [socket]);
+
   const handleAction = useCallback<SocketContextState["action"]>(
     (payload) => {
       socket?.emit("player:action", payload);
@@ -155,7 +169,24 @@ export function SocketProvider({
     [socket],
   );
 
-  console.log({ currentTurn: state.currentTurn, socketId: socket?.id });
+  const handleDiscard = useCallback<SocketContextState["discard"]>(
+    (payload) => {
+      socket?.emit("player:discard", payload);
+    },
+    [socket],
+  );
+
+  const handleSendChatMessage = useCallback<
+    SocketContextState["sendChatMessage"]
+  >(
+    (message, targetUsername) => {
+      socket?.emit("chat:message", {
+        message,
+        targetUsername,
+      } satisfies ChatMessageEventPayload);
+    },
+    [socket],
+  );
 
   return (
     <SocketContext.Provider
@@ -165,9 +196,12 @@ export function SocketProvider({
         state,
         join: handleJoin,
         start: handleStart,
+        restart: handleRestart,
         action: handleAction,
         block: handleBlock,
         challenge: handleChallenge,
+        discard: handleDiscard,
+        sendChatMessage: handleSendChatMessage,
       }}
     >
       {children}

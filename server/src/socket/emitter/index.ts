@@ -46,6 +46,15 @@ export const GameEmitter = {
     io.emit("server:announcement", { message, timestamp: Date.now() });
   },
 
+  chatRoom(roomId: string, log: LogData) {
+    io.to(roomId).emit("chat:message", { log });
+  },
+
+  chatPrivate(senderSocketId: string, targetSocketId: string, log: LogData) {
+    io.to(senderSocketId).emit("chat:message", { log });
+    io.to(targetSocketId).emit("chat:message", { log });
+  },
+
   error(targetId: string, message: string) {
     io.to(targetId).emit("error", { message });
   },

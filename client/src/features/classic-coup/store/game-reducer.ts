@@ -42,6 +42,10 @@ export type GameReducerAction =
   | {
       type: "ROOM_LOG";
       data: LogEventData;
+    }
+  | {
+      type: "CHAT_MESSAGE";
+      data: LogEventData;
     };
 
 export function gameReducer(
@@ -86,6 +90,11 @@ export function gameReducer(
         }),
       };
     case "ROOM_LOG":
+      return {
+        ...state,
+        logs: state.logs.concat(action.data.log),
+      };
+    case "CHAT_MESSAGE":
       return {
         ...state,
         logs: state.logs.concat(action.data.log),

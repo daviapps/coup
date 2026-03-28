@@ -1,6 +1,6 @@
 import { useTranslation } from "react-i18next";
 import "./style.css";
-import { Player } from "@coup/shared/types";
+import type { Player } from "@coup/shared/types";
 
 export type PlayerCardProps = {
   player: Player;

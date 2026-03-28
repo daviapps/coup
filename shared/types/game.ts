@@ -18,6 +18,7 @@ export type PendingAction = {
 
   // Controle de Desafio
   playersRefusedChallenge: string[];
+  playersRefusedBlock: string[];
   isChallenged: boolean;
   challengerId?: string;
 };
@@ -52,6 +53,7 @@ export type Player = {
 };
 
 export type LogData = {
+  type: "log" | "chat";
   message: string;
   sender: string;
   receiver?: string;
@@ -62,6 +64,8 @@ export type GameSnapshot = {
   phase: GamePhase;
   players: Player[];
   pendingAction?: PendingAction;
+  victimId?: string;
+  winner?: string;
   logs: LogData[];
   deckCount: number;
   currentTurn: string;

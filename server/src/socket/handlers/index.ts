@@ -1,10 +1,11 @@
 import { roomManager } from "@/game/room-manager";
-import { BadRequestError } from "http-errors-enhanced";
 import { Server, Socket } from "socket.io";
-import { logger } from "@/services/logger";
 import {
+  ChatMessageEventPayload,
   PlayerActionEventPayload,
+  PlayerBlockEventPayload,
   PlayerChallengeEventPayload,
+  PlayerDiscardEventPayload,
   PlayerJoinEventPayload,
 } from "@coup/shared/types";
 import { GameEmitter } from "../emitter";
@@ -27,6 +28,11 @@ export const registerHandlers = (io: Server, socket: Socket) => {
     room?.handleStart(socket);
   });
 
+  socket.on("game:restart", () => {
+    const room = roomManager.findRoomByPlayerSocket(socket);
+    room?.handleRestart(socket);
+  });
+
   socket.on("player:action", (payload: PlayerActionEventPayload) => {
     const room = roomManager.findRoomByPlayerSocket(socket);
     room?.handlePlayerAction(socket, payload);
@@ -36,6 +42,29 @@ export const registerHandlers = (io: Server, socket: Socket) => {
     const room = roomManager.findRoomByPlayerSocket(socket);
     room?.handleChallenge(socket, payload.challenge);
   });
+
+  socket.on("player:block", (payload: PlayerBlockEventPayload) => {
+    const room = roomManager.findRoomByPlayerSocket(socket);
+    room?.handleBlock(socket, payload.character);
+  });
+
+  socket.on("player:discard", (payload: PlayerDiscardEventPayload) => {
+    const room = roomManager.findRoomByPlayerSocket(socket);
+    room?.handleDiscard(socket, payload.cardIndex);
+  });
+
+  socket.on(
+    "chat:message",
+    ({ message, targetUsername }: ChatMessageEventPayload) => {
+      if (typeof message !== "string" || message.trim().length === 0) return;
+      if (message.length > 200) return;
+
+      const room = roomManager.findRoomByPlayerSocket(socket);
+      if (!room) return;
+
+      room.handleChatMessage(socket, message.trim(), targetUsername);
+    },
+  );
 
   socket.on("disconnect", () => {
     const room = roomManager.findRoomByPlayerSocket(socket);

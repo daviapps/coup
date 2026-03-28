@@ -30,7 +30,7 @@ class RoomManager {
     const room = roomManager.findRoomById(roomId);
     if (!room) throw new Error("room_not_found");
 
-    room.abort();
+    room.handleAbort();
     this.rooms.delete(roomId);
   }
 
