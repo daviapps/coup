@@ -1,0 +1,13 @@
+{
+  "type": "node",
+  "request": "launch",
+  "name": "Debug TS",
+  "program": "${workspaceFolder}/src/index.ts", // Seu arquivo principal
+  "sourceMaps": true,
+  "smartStep": true,
+  "outFiles": [
+    "${workspaceFolder}/dist/**/*.js", // Onde os arquivos compilados ficam
+    "!**/node_modules/**"
+  ],
+  "resolveSourceMapLocations": ["${workspaceFolder}/**", "!**/node_modules/**"]
+}

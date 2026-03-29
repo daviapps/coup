@@ -1,27 +1,25 @@
-import { Suspense } from 'react';
-import Routes from './Routes';
-const queryClient = new QueryClient();
+import { Suspense } from "react";
+import Routes from "./Routes";
 
-import './App.css';
-import { QueryClient, QueryClientProvider } from 'react-query';
+import { AppProvider } from "./providers";
 
 function App() {
   return (
     <Suspense fallback={<Loading />}>
-      <QueryClientProvider client={queryClient}>
+      <AppProvider>
         <Routes />
-      </QueryClientProvider>
+      </AppProvider>
     </Suspense>
-  )
+  );
 }
 
 const Loading = () => (
   <div
     className="d-flex align-items-center justify-content-center"
-    style={{ height: '100%' }}
+    style={{ height: "100%" }}
   >
     ...
   </div>
-)
+);
 
-export default App
+export default App;

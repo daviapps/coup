@@ -3,6 +3,7 @@ WORKDIR /app
 
 COPY package.json yarn.lock ./
 COPY client/package.json ./client/
+COPY shared/package.json ./shared/
 
 RUN yarn install --frozen-lockfile
 
@@ -10,7 +11,9 @@ ARG VITE_SERVER_URL
 ENV VITE_SERVER_URL=${VITE_SERVER_URL}
 
 COPY client ./client
-RUN yarn build
+COPY shared ./shared
+
+RUN yarn workspace @coup/client run build
 
 FROM nginx:alpine AS runner
 COPY --from=builder /app/client/dist /usr/share/nginx/html

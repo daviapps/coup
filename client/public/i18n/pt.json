@@ -9,7 +9,10 @@
     "player_already_connected": "Já existe um jogador nessa sala com esse nome",
     "room_full": "Esta sala está cheia",
     "room_not_found": "Sala não encontrada",
-    "unexpected_error": "Erro inesperado, por favor tente novamente mais tarde"
+    "unexpected_error": "Erro inesperado, por favor tente novamente mais tarde",
+    "game_already_started": "A partida já começou",
+    "min_players": "É necessário pelo menos 3 jogadores",
+    "wrong_password": "Senha incorreta"
   },
   "global_fields": {
     "username": {
@@ -19,6 +22,10 @@
     "room_id": {
       "label": "Código da sala",
       "placeholder": "XXXX"
+    },
+    "password": {
+      "label": "Senha",
+      "placeholder": "Opcional"
     }
   },
   "views": {
@@ -30,6 +37,11 @@
     "new": {
       "submit": "Criar",
       "link_join": "Clique aqui para entrar em uma sala"
+    },
+    "find": {
+      "table_code": "Código",
+      "table_players": "Jogadores",
+      "no_rooms": "Nenhuma sala disponível"
     },
     "room": {
       "slot_players_title": "Jogadores",
@@ -45,10 +57,86 @@
     }
   },
   "log": {
+    "game_started": "{{sender}} iniciou a partida",
+    "game_restarted": "{{sender}} reiniciou a partida",
     "player_Joined": "{{sender}} entrou na partida",
-    "player_left": "{{sender}} saiu na partida",
+    "player_left": "{{sender}} saiu da partida",
     "player_reconnected": "{{sender}} reconectou",
-    "player_disconnected": "{{sender}} está desconectado"
+    "player_disconnected": "{{sender}} está desconectado",
+    "player_eliminated": "{{sender}} foi eliminado",
+    "player_lost_influence": "{{sender}} perdeu uma influência",
+    "player_blocks": "{{sender}} bloqueia a ação",
+    "action_income": "{{sender}} recebe renda",
+    "action_foreign_aid": "{{sender}} pede ajuda externa",
+    "action_tax": "{{sender}} cobra taxa",
+    "action_steal": "{{sender}} rouba de {{receiver}}",
+    "action_assassinate": "{{sender}} tenta assassinar {{receiver}}",
+    "action_exchange": "{{sender}} troca cartas",
+    "action_coup": "{{sender}} dá um golpe em {{receiver}}",
+    "challenge": "{{sender}} contesta {{receiver}}",
+    "challenge_failed": "{{receiver}} tinha a carta! {{sender}} perde influência",
+    "challenge_succeeded": "{{receiver}} estava blefando! {{receiver}} perde influência",
+    "block_challenge": "{{sender}} contesta o bloqueio de {{receiver}}",
+    "block_challenge_failed": "{{receiver}} tinha a carta! Bloqueio bem-sucedido",
+    "block_challenge_succeeded": "{{receiver}} estava blefando! Bloqueio falhou"
+  },
+  "game": {
+    "start": "Iniciar",
+    "play_again": "Jogar Novamente",
+    "game_over": "Fim de Jogo",
+    "wins": "{{player}} venceu!",
+    "spectating": "Espectando",
+    "waiting_owner": "Aguardando o dono iniciar a partida",
+    "waiting_action": "Aguardando ação de {{player}}",
+    "waiting_block": "Aguardando decisão de bloqueio...",
+    "waiting_discard": "Aguardando {{player}} descartar...",
+    "challenge_window": "Janela de contestação",
+    "block_window": "Janela de bloqueio",
+    "blocks_with": "{{player}} bloqueia com {{character}}",
+    "select_target": "Selecionar alvo:",
+    "back": "Voltar",
+    "challenge": "Contestar",
+    "pass": "Passar",
+    "block": "Bloquear ({{character}})",
+    "passed": "Passou",
+    "passed_block": "Passou no bloqueio",
+    "choose_card": "Escolha uma carta para perder:",
+    "coins_one": "{{count}} moeda",
+    "coins_other": "{{count}} moedas",
+    "cost": "({{count}} moedas)",
+    "offline": "offline",
+    "password_required": "A sala {{room}} requer uma senha",
+    "action": {
+      "INCOME": "Renda",
+      "FOREIGN_AID": "Ajuda Externa",
+      "TAX": "Taxa",
+      "STEAL": "Roubar",
+      "ASSASSINATE": "Assassinar",
+      "EXCHANGE": "Trocar Cartas",
+      "COUP": "Golpe de Estado"
+    },
+    "character": {
+      "DUKE": "Duque",
+      "CAPTAIN": "Capitão",
+      "ASSASSIN": "Assassino",
+      "CONTESSA": "Condessa",
+      "AMBASSADOR": "Embaixador"
+    },
+    "phase": {
+      "LOBBY": "Sala",
+      "ACTION_SELECTION": "Seleção de Ação",
+      "CHALLENGE_WINDOW": "Contestação",
+      "BLOCK_WINDOW": "Bloqueio",
+      "BLOCK_CHALLENGE_WINDOW": "Contestação de Bloqueio",
+      "DISCARD_INFLUENCE": "Descartar Influência",
+      "GAME_OVER": "Fim de Jogo"
+    }
+  },
+  "chat": {
+    "target_everyone": "Todos",
+    "target_whisper": "@ {{player}}",
+    "whisper_from": "[de {{sender}}]",
+    "whisper_to": "[para {{receiver}}]"
   },
   "components": {
     "chat": {

@@ -1,176 +1,277 @@
-import { MouseEventHandler, useCallback, useEffect, useState } from "react";
-import { Navigate, useParams, useNavigate, Link } from "react-router-dom"
-
-import ConnectionStatus, { ConnectionStatusProps } from "../../components/ConnectionStatus";
-import RoomSlot from "../../components/RoomSlot";
-import { JoinCallbackProps, State } from "../../lib/types";
-import createSocket from "../../services/socket-io";
-import PlayerCard from "../../components/PlayerCard";
-import { Socket } from "socket.io-client";
+import {
+  Chat,
+  GameBoard,
+  PlayerCards,
+  SocketProvider,
+  StatusBar,
+} from "@/features/classic-coup";
+import { useGame } from "@/features/classic-coup";
+import { ChatEntryItem } from "@/features/classic-coup/components/Chat";
+import { useLocalState } from "@daviapps/react-utils";
+import { LockIcon, MessageCircleIcon, XIcon } from "lucide-react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { Navigate, useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import Chat from "../../components/Chat";
-import Header from "../../components/Header";
+import api from "@/services/api";
+import type { RoomInfo } from "@coup/shared/types";
+import * as S from "./styles";
 
-export default function Room(){
+export default function GameRoom() {
+  const { id } = useParams();
   const { t } = useTranslation();
-  const navigate = useNavigate();
-  const { id } = useParams<string>();
-  const [username] = useState<string>(localStorage.getItem('username') || '');
-  const [socket, setSocket] = useState<Socket | undefined>()
-  const [state, setState] = useState<State | null>(null);
-  
-  const [connectionStatus, setConnectionStatus] = useState<ConnectionStatusProps>({
-    status: 'connecting'
+
+  const [username] = useLocalState<string | undefined>({
+    key: "username",
   });
 
+  const [, setRoomId] = useLocalState<string>({
+    key: "room_id ",
+    initialState: id,
+  });
+
+  const [password, setPassword] = useState("");
+  const [authorized, setAuthorized] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [needsPassword, setNeedsPassword] = useState(false);
+  const [error, setError] = useState("");
+
   useEffect(() => {
-    if(!username){
-      if(id)
-        localStorage.setItem('room_id', id);
+    id && setRoomId(id);
+  }, [id, setRoomId]);
 
-      navigate('/join');
-      return;
-    }
+  // Check room info on mount — verify password if room is protected
+  useEffect(() => {
+    if (!id) return;
 
-    const socket = createSocket({
-      query: { username, room_id: id }
-    });
+    api
+      .get(`/rooms/${id}`)
+      .then((res) => {
+        const info = res.data as RoomInfo;
+        if (!info.hasPassword) {
+          setAuthorized(true);
+          setLoading(false);
+          return;
+        }
 
-    setSocket(socket);
-
-    socket.emit('join', {}, ({ success, message }: JoinCallbackProps) => {
-      if(!success){
-        socket.disconnect();
-
-        setConnectionStatus({
-          status: success ? 'connected' : 'error',
-          message: message
-        });
-      }
-    });
-    
-    socket.on("reconnect", () => {
-      setConnectionStatus({
-        status: 'connecting',
-        message: 'views.room.status_message_reconnecting'
-      });
-    });
-
-    socket.on("connect", () => {
-      setConnectionStatus({
-        status: 'connecting',
-        message: 'views.room.status_message_waiting_server'
-      });
-    });
-
-    socket.on("disconnect", (reason) => {
-      console.log('reason', reason);
-      if(reason === "ping timeout")
-        return;
-
-      setConnectionStatus({
-        status: 'disconnected'
+        // Room has password — try stored password
+        const stored = localStorage.getItem("room_password") || "";
+        if (stored) {
+          api
+            .post(`/rooms/${id}/check-password`, { password: stored })
+            .then(() => {
+              setPassword(stored);
+              setAuthorized(true);
+              setLoading(false);
+            })
+            .catch(() => {
+              localStorage.removeItem("room_password");
+              setNeedsPassword(true);
+              setLoading(false);
+            });
+        } else {
+          setNeedsPassword(true);
+          setLoading(false);
+        }
       })
-    });
-    
-    socket.on("state", (newState: State) => {
-      const keysOfNewState = Object.keys(newState) as Array<keyof typeof newState>;
-      setState((state) => state ? keysOfNewState.reduce<State>((ac, key) => {
-        return { ...ac, [key]: newState[key] };
-      }, state) : newState);
-
-      setConnectionStatus({
-        status: 'connected',
-        message: 'views.room.status_message_connected'
+      .catch(() => {
+        setError("global.room_not_found");
+        setLoading(false);
       });
-    });
+  }, [id]);
 
-    return () => {
-      socket.disconnect();
-    }
-  }, [navigate, id, username]);
+  const handlePasswordSubmit = useCallback(() => {
+    if (!id) return;
+    setError("");
 
-  const handleLeave = useCallback<MouseEventHandler<HTMLAnchorElement>>((e) => {
-    if(!socket) return;
-    e.preventDefault();
-    socket.emit('leave', () => navigate('/join'));
-  }, [socket, navigate]);
+    api
+      .post(`/rooms/${id}/check-password`, { password })
+      .then(() => {
+        localStorage.setItem("room_password", password);
+        setAuthorized(true);
+      })
+      .catch((err) => {
+        if (err.response) {
+          setError(err.response.data.message || "global.unexpected_error");
+        } else {
+          setError("global.unexpected_error");
+        }
+      });
+  }, [id, password]);
 
-  const handleChatSend = useCallback((message: string) => {
-    if(!socket) return;
-    socket.emit("log", {
-      message: message
-    });
-  }, [socket]);
+  if (!id || !username) return <Navigate to="/join" />;
 
-  if(!id) return (
-    <Navigate to='/' />
-  );
+  if (loading) return null;
+
+  if (error && !needsPassword) {
+    return (
+      <S.PasswordGate>
+        <S.PasswordCard>
+          <S.PasswordError>{t(error)}</S.PasswordError>
+        </S.PasswordCard>
+      </S.PasswordGate>
+    );
+  }
+
+  if (needsPassword && !authorized) {
+    return (
+      <S.PasswordGate>
+        <S.PasswordCard>
+          <LockIcon
+            size={32}
+            style={{ alignSelf: "center", color: "var(--colors-comment)" }}
+          />
+          <S.PasswordTitle>{t("global_fields.password.label")}</S.PasswordTitle>
+          <S.PasswordSubtitle>
+            {t("game.password_required", { room: id.toUpperCase() })}
+          </S.PasswordSubtitle>
+          <S.PasswordInput
+            type="password"
+            value={password}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              setPassword(e.target.value)
+            }
+            onKeyDown={(e: React.KeyboardEvent) =>
+              e.key === "Enter" && handlePasswordSubmit()
+            }
+            placeholder="••••••"
+            autoFocus
+          />
+          {error && <S.PasswordError>{t(error)}</S.PasswordError>}
+          <S.PasswordButton onClick={handlePasswordSubmit}>
+            {t("views.join.submit")}
+          </S.PasswordButton>
+        </S.PasswordCard>
+      </S.PasswordGate>
+    );
+  }
 
   return (
-    <section className="container room-container">
-      <ConnectionStatus
-        status={connectionStatus.status}
-        message={t(connectionStatus.message || '', {
-          room_id: (id || '').toUpperCase()
-        }) || ''}
-      />
-      <Header />
+    <SocketProvider roomId={id} username={username} password={password}>
+      <RoomContent />
+    </SocketProvider>
+  );
+}
 
-      {!state && (
-        <center className="my-5">
-          {connectionStatus.status === 'connected' && (
-            <p>{t('views.room.status_text_message_fetching_data')}</p>
-          )}
+function RoomContent() {
+  const { state, sendChatMessage, socketId } = useGame();
+  const { t } = useTranslation();
+  const [chatOpen, setChatOpen] = useState(false);
+  const [lastSeenCount, setLastSeenCount] = useState(0);
+  const [message, setMessage] = useState("");
+  const [target, setTarget] = useState<string | undefined>(undefined);
+  const scrollRef = useRef<HTMLDivElement>(null);
 
-          {connectionStatus.status === 'connecting' && (
-            <p>{t('views.room.status_text_message_connecting')}</p>
-          )}
+  const hasUnread = state.logs.length > lastSeenCount;
+  const currentPlayer = state.players.find((p) => p.id === socketId);
 
-          {connectionStatus.status === 'error' && <>
-            <p>{t('views.room.status_text_message_error')}</p>
+  useEffect(() => {
+    if (chatOpen) {
+      setLastSeenCount(state.logs.length);
+      if (scrollRef.current) {
+        scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+      }
+    }
+  }, [chatOpen, state.logs.length]);
 
-            <div className="d-flex g-3 mt-5">
-              <Link to={"/new"} className="btn btn-primary flex-grow-1">{t("global.new_game")}</Link>
-              <Link to={"/join"} className="btn flex-grow-1">{t("global.join_game")}</Link>
-            </div>
-          </>}
-        </center>
-      )}
+  const handleSend = () => {
+    const trimmed = message.trim();
+    if (!trimmed) return;
+    sendChatMessage(trimmed, target);
+    setMessage("");
+  };
 
-      {state && <>
-        <div className="row mt-3 gy-3 flex-grow-1">
-          <div className="col-12 col-md-3">
-            <RoomSlot title={t('views.room.slot_players_title') || ''}>
-              {state.players.map(player => (
-                <PlayerCard key={player.socket_id} player={player} />
-              ))}
-            </RoomSlot>
-          </div>
-          <div className="col-12 col-md 6">
-            <RoomSlot title={t('views.room.slot_actions_title') || ''}>
-              TODO: Actions Grid
-            </RoomSlot>
-          </div>
-          <div className="col-12 col-md-3">
-            <RoomSlot title={t('views.room.slot_logs_title') || ''}>
-              <Chat
-                enabled={connectionStatus.status === 'connected'}
-                history={state.log}
-                onSend={handleChatSend}
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      handleSend();
+    }
+  };
+
+  return (
+    <S.Wrapper>
+      <GameBoard />
+      <PlayerCards />
+      <Chat />
+      <StatusBar />
+
+      <S.MobileChatToggle
+        data-open={String(chatOpen)}
+        onClick={() => setChatOpen((o) => !o)}
+      >
+        {chatOpen ? <XIcon /> : <MessageCircleIcon />}
+        {!chatOpen && hasUnread && <S.MobileChatBadge />}
+      </S.MobileChatToggle>
+
+      {chatOpen && (
+        <S.MobileChatOverlay>
+          <S.MobileChatMessages ref={scrollRef}>
+            {state.logs.map((entry, i) => (
+              <ChatEntryItem
+                key={i}
+                entry={entry}
+                currentUsername={currentPlayer?.username}
               />
-            </RoomSlot>
-          </div>
-        </div>
-        
-        <RoomSlot title="" className="d-flex mt-3">
-          <Link
-            to={'/join'}
-            className="btn"
-            onClick={(e) => handleLeave(e)}>{t('global.leave_room')}
-          </Link>
-        </RoomSlot>
-      </>}
-    </section>
-  )
+            ))}
+          </S.MobileChatMessages>
+          <S.MobileChatInput>
+            <select
+              value={target || ""}
+              onChange={(e) => setTarget(e.target.value || undefined)}
+              style={{
+                background: "var(--colors-current-line)",
+                color: "var(--colors-foreground)",
+                border: "1px solid var(--colors-comment)",
+                borderRadius: 4,
+                padding: "4px",
+                fontSize: 11,
+                maxWidth: 100,
+              }}
+            >
+              <option value="">{t("chat.target_everyone")}</option>
+              {state.players
+                .filter((p) => p.id !== socketId)
+                .map((p) => (
+                  <option key={p.username} value={p.username}>
+                    {t("chat.target_whisper", { player: p.username })}
+                  </option>
+                ))}
+            </select>
+            <input
+              value={message}
+              onChange={(e) => setMessage(e.target.value)}
+              onKeyDown={handleKeyDown}
+              placeholder={t("components.chat.input_placeholder") || ""}
+              maxLength={200}
+              style={{
+                flex: 1,
+                background: "var(--colors-current-line)",
+                color: "var(--colors-foreground)",
+                border: "1px solid var(--colors-comment)",
+                borderRadius: 4,
+                padding: "4px 8px",
+                fontSize: 13,
+                minWidth: 0,
+              }}
+            />
+            <button
+              onClick={handleSend}
+              style={{
+                background: "var(--colors-primary)",
+                color: "var(--colors-background)",
+                border: "none",
+                borderRadius: 4,
+                padding: "4px 10px",
+                fontSize: 12,
+                fontWeight: "bold",
+                cursor: "pointer",
+                textTransform: "uppercase",
+              }}
+            >
+              {t("components.chat.send_btn")}
+            </button>
+          </S.MobileChatInput>
+        </S.MobileChatOverlay>
+      )}
+    </S.Wrapper>
+  );
 }

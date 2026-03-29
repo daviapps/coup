@@ -9,7 +9,10 @@
     "player_already_connected": "There's already a player with this username in this room",
     "room_full": "This room is full",
     "room_not_found": "Room not found",
-    "unexpected_error": "Unexpected error, please try again later"
+    "unexpected_error": "Unexpected error, please try again later",
+    "game_already_started": "Game already started",
+    "min_players": "At least 3 players required",
+    "wrong_password": "Wrong password"
   },
   "global_fields": {
     "username": {
@@ -19,6 +22,10 @@
     "room_id": {
       "label": "Room ID",
       "placeholder": "XXXX"
+    },
+    "password": {
+      "label": "Password",
+      "placeholder": "Optional"
     }
   },
   "views": {
@@ -30,6 +37,11 @@
     "new": {
       "submit": "Create",
       "link_join": "Click here to join a room"
+    },
+    "find": {
+      "table_code": "Code",
+      "table_players": "Players",
+      "no_rooms": "No rooms available"
     },
     "room": {
       "slot_players_title": "Players",
@@ -45,10 +57,86 @@
     }
   },
   "log": {
+    "game_started": "{{sender}} started the game",
+    "game_restarted": "{{sender}} restarted the game",
     "player_Joined": "{{sender}} joined the room",
     "player_left": "{{sender}} left the room",
     "player_reconnected": "{{sender}} reconnected",
-    "player_disconnected": "{{sender}} disconnected"
+    "player_disconnected": "{{sender}} disconnected",
+    "player_eliminated": "{{sender}} has been eliminated",
+    "player_lost_influence": "{{sender}} lost an influence",
+    "player_blocks": "{{sender}} blocks the action",
+    "action_income": "{{sender}} takes income",
+    "action_foreign_aid": "{{sender}} takes foreign aid",
+    "action_tax": "{{sender}} collects tax",
+    "action_steal": "{{sender}} steals from {{receiver}}",
+    "action_assassinate": "{{sender}} attempts to assassinate {{receiver}}",
+    "action_exchange": "{{sender}} exchanges cards",
+    "action_coup": "{{sender}} launches a coup against {{receiver}}",
+    "challenge": "{{sender}} challenges {{receiver}}",
+    "challenge_failed": "{{receiver}} had the card! {{sender}} loses influence",
+    "challenge_succeeded": "{{receiver}} was bluffing! {{receiver}} loses influence",
+    "block_challenge": "{{sender}} challenges {{receiver}}'s block",
+    "block_challenge_failed": "{{receiver}} had the card! Block succeeds",
+    "block_challenge_succeeded": "{{receiver}} was bluffing! Block fails"
+  },
+  "game": {
+    "start": "Start",
+    "play_again": "Play Again",
+    "game_over": "Game Over",
+    "wins": "{{player}} wins!",
+    "spectating": "Spectating",
+    "waiting_owner": "Waiting owner to start the game",
+    "waiting_action": "Waiting {{player}}'s action",
+    "waiting_block": "Waiting for block decision...",
+    "waiting_discard": "Waiting {{player}} to discard...",
+    "challenge_window": "Challenge window",
+    "block_window": "Block window",
+    "blocks_with": "{{player}} blocks with {{character}}",
+    "select_target": "Select target:",
+    "back": "Back",
+    "challenge": "Challenge",
+    "pass": "Pass",
+    "block": "Block ({{character}})",
+    "passed": "Passed",
+    "passed_block": "Passed on blocking",
+    "choose_card": "Choose a card to lose:",
+    "coins_one": "{{count}} coin",
+    "coins_other": "{{count}} coins",
+    "cost": "({{count}} coins)",
+    "offline": "offline",
+    "password_required": "Room {{room}} requires a password",
+    "action": {
+      "INCOME": "Income",
+      "FOREIGN_AID": "Foreign Aid",
+      "TAX": "Tax",
+      "STEAL": "Steal",
+      "ASSASSINATE": "Assassinate",
+      "EXCHANGE": "Exchange",
+      "COUP": "Coup"
+    },
+    "character": {
+      "DUKE": "Duke",
+      "CAPTAIN": "Captain",
+      "ASSASSIN": "Assassin",
+      "CONTESSA": "Contessa",
+      "AMBASSADOR": "Ambassador"
+    },
+    "phase": {
+      "LOBBY": "Lobby",
+      "ACTION_SELECTION": "Action Selection",
+      "CHALLENGE_WINDOW": "Challenge Window",
+      "BLOCK_WINDOW": "Block Window",
+      "BLOCK_CHALLENGE_WINDOW": "Block Challenge",
+      "DISCARD_INFLUENCE": "Discard Influence",
+      "GAME_OVER": "Game Over"
+    }
+  },
+  "chat": {
+    "target_everyone": "Everyone",
+    "target_whisper": "@ {{player}}",
+    "whisper_from": "[from {{sender}}]",
+    "whisper_to": "[to {{receiver}}]"
   },
   "components": {
     "chat": {

@@ -1,5 +1,4 @@
-import { Player, State } from "../lib/types";
-import { getRandomInt } from "../lib/utils";
+import { getRandomInt, Player, State } from "@coup/shared";
 import type { Server } from "socket.io";
 
 export default class Room {

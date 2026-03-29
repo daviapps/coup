@@ -1,14 +1,12 @@
-import { Player } from 'lib/types';
-import { useTranslation } from 'react-i18next';
-import './style.css';
+import { useTranslation } from "react-i18next";
+import "./style.css";
+import type { Player } from "@coup/shared/types";
 
 export type PlayerCardProps = {
   player: Player;
 };
 
-export default function PlayerCard({
-  player
-}: PlayerCardProps) {
+export default function PlayerCard({ player }: PlayerCardProps) {
   const { t } = useTranslation();
 
   return (
