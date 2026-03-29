@@ -5,6 +5,7 @@ export type GamePhase =
   | "BLOCK_WINDOW"
   | "BLOCK_CHALLENGE_WINDOW"
   | "DISCARD_INFLUENCE"
+  | "EXCHANGE_SELECTION"
   | "GAME_OVER";
 
 export type PendingAction = {

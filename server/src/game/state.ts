@@ -145,6 +145,36 @@ export class GameState {
     }));
   }
 
+  public drawExchangeCards(playerId: string): number {
+    const player = this.players.get(playerId);
+    if (!player) return 0;
+
+    const drawn = this.takeCardsFromStack(2);
+    player.cards.push(...drawn);
+    return drawn.length;
+  }
+
+  public returnExchangeCards(playerId: string, returnIndices: number[]): boolean {
+    const player = this.players.get(playerId);
+    if (!player) return false;
+
+    // Validate indices
+    for (const idx of returnIndices) {
+      const card = player.cards[idx];
+      if (!card || card.revealed) return false;
+    }
+
+    // Return cards to deck (sorted descending to splice safely)
+    const sorted = [...returnIndices].sort((a, b) => b - a);
+    for (const idx of sorted) {
+      const card = player.cards.splice(idx, 1)[0];
+      if (card.type) this.deck.push(card.type);
+    }
+
+    this.shuffleDeck();
+    return true;
+  }
+
   private transferCoins(amount: number, targetId: string, originId?: string) {
     const target = this.players.get(targetId);
     if (!target) return;

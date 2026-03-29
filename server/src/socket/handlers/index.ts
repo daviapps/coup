@@ -6,6 +6,7 @@ import {
   PlayerBlockEventPayload,
   PlayerChallengeEventPayload,
   PlayerDiscardEventPayload,
+  PlayerExchangeEventPayload,
   PlayerJoinEventPayload,
 } from "@coup/shared/types";
 import { GameEmitter } from "../emitter";
@@ -60,6 +61,11 @@ export const registerHandlers = (io: Server, socket: Socket) => {
   socket.on("player:discard", (payload: PlayerDiscardEventPayload) => {
     const room = roomManager.findRoomByPlayerSocket(socket);
     room?.handleDiscard(socket, payload.cardIndex);
+  });
+
+  socket.on("player:exchange", (payload: PlayerExchangeEventPayload) => {
+    const room = roomManager.findRoomByPlayerSocket(socket);
+    room?.handleExchange(socket, payload.returnIndices);
   });
 
   socket.on(

@@ -101,6 +101,10 @@
     "passed": "Passou",
     "passed_block": "Passou no bloqueio",
     "choose_card": "Escolha uma carta para perder:",
+    "waiting_exchange": "Aguardando {{player}} trocar cartas...",
+    "exchange_prompt": "Selecione 2 cartas para devolver:",
+    "exchange_selected": "{{count}}/2 selecionadas",
+    "exchange_confirm": "Confirmar troca",
     "coins_one": "{{count}} moeda",
     "coins_other": "{{count}} moedas",
     "cost": "({{count}} moedas)",
@@ -129,6 +133,7 @@
       "BLOCK_WINDOW": "Bloqueio",
       "BLOCK_CHALLENGE_WINDOW": "Contestação de Bloqueio",
       "DISCARD_INFLUENCE": "Descartar Influência",
+      "EXCHANGE_SELECTION": "Troca de Cartas",
       "GAME_OVER": "Fim de Jogo"
     }
   },

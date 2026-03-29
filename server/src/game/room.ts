@@ -36,6 +36,11 @@ export class GameRoom {
       const personalSnapshot = this.state.getPublicSnapshot(player.username);
       GameEmitter.syncGame(socketId, personalSnapshot);
     });
+
+    // Start action selection timer when entering ACTION_SELECTION
+    if (this.state.phase === "ACTION_SELECTION" && !this.timeoutId) {
+      this.startActionSelectionTimer();
+    }
   }
 
   public playerSync(username: string) {
@@ -73,14 +78,30 @@ export class GameRoom {
 
   // Timer management
 
-  private startTimer() {
-    this.timeoutId = setTimeout(() => this.onTimerExpired(), 5000);
+  private startTimer(durationMs = 5000) {
+    this.timeoutId = setTimeout(() => this.onTimerExpired(), durationMs);
   }
 
   private stopTimer() {
     if (!this.timeoutId) return;
     clearTimeout(this.timeoutId);
     this.timeoutId = undefined;
+  }
+
+  private startActionSelectionTimer() {
+    this.timeoutId = setTimeout(() => {
+      if (this.state.phase !== "ACTION_SELECTION") return;
+      if (!this.state.currentTurn) return;
+
+      const player = this.state.players.get(this.state.currentTurn);
+      if (!player) return;
+
+      // Auto-select INCOME when timer expires
+      this.handlePlayerAction(
+        { id: this.state.currentTurn } as Socket,
+        { type: "INCOME" },
+      );
+    }, 20000);
   }
 
   // Eligible player counting
@@ -185,8 +206,12 @@ export class GameRoom {
     }
 
     if (result === "exchange") {
-      // TODO: Implement ambassador exchange card selection
-      this.state.nextTurn();
+      const actorId = this.state.pendingAction?.actorId;
+      if (!actorId) return;
+
+      this.state.drawExchangeCards(actorId);
+      this.state.phase = "EXCHANGE_SELECTION";
+      this.startTimer(20000);
       this.broadcastSync();
       return;
     }
@@ -225,6 +250,23 @@ export class GameRoom {
     if (this.state.phase === "BLOCK_CHALLENGE_WINDOW") {
       // Nobody challenged the block → block succeeds, action cancelled
       this.log("Block not challenged, action cancelled");
+      this.state.nextTurn();
+      this.broadcastSync();
+      return;
+    }
+
+    if (this.state.phase === "EXCHANGE_SELECTION") {
+      // Auto-return the last 2 cards (the drawn ones)
+      const actorId = action.actorId;
+      const player = this.state.players.get(actorId);
+      if (player) {
+        const unrevealed = player.cards
+          .map((c, i) => ({ idx: i, card: c }))
+          .filter((e) => !e.card.revealed);
+        // Return the last 2 unrevealed (the drawn cards)
+        const toReturn = unrevealed.slice(-2).map((e) => e.idx);
+        this.state.returnExchangeCards(actorId, toReturn);
+      }
       this.state.nextTurn();
       this.broadcastSync();
       return;
@@ -335,7 +377,7 @@ export class GameRoom {
 
   // Game action handlers
 
-  public handlePlayerAction(socket: Socket, action: PlayerActionEventPayload) {
+  public handlePlayerAction(socket: Socket | { id: string }, action: PlayerActionEventPayload) {
     if (this.state.phase !== "ACTION_SELECTION") {
       return GameEmitter.error(
         socket.id,
@@ -346,6 +388,8 @@ export class GameRoom {
     if (this.state.currentTurn !== socket.id) {
       return GameEmitter.error(socket.id, "It's not your turn");
     }
+
+    this.stopTimer(); // Stop action selection timer
 
     const player = this.state.players.get(socket.id);
     if (!player) return;
@@ -754,6 +798,42 @@ export class GameRoom {
       this.state.log(logEntry);
       GameEmitter.logRoom(this.id, logEntry);
     }
+  }
+
+  public handleExchange(socket: Socket, returnIndices: number[]) {
+    if (this.state.phase !== "EXCHANGE_SELECTION") return;
+
+    const action = this.state.pendingAction;
+    if (!action || action.actorId !== socket.id) {
+      return GameEmitter.error(socket.id, "It's not your turn to exchange");
+    }
+
+    // Must return exactly 2 cards
+    if (returnIndices.length !== 2) {
+      return GameEmitter.error(socket.id, "You must return exactly 2 cards");
+    }
+
+    // Check for duplicate indices
+    if (returnIndices[0] === returnIndices[1]) {
+      return GameEmitter.error(socket.id, "Invalid card selection");
+    }
+
+    const success = this.state.returnExchangeCards(socket.id, returnIndices);
+    if (!success) {
+      return GameEmitter.error(socket.id, "Invalid card selection");
+    }
+
+    this.stopTimer();
+
+    const player = this.state.players.get(socket.id);
+    this.log(`${player?.username} exchanged cards`, {
+      type: "log",
+      message: "log.action_exchange",
+      sender: player?.username || "",
+    });
+
+    this.state.nextTurn();
+    this.broadcastSync();
   }
 
   public handleDiscard(socket: Socket, cardIndex: number) {

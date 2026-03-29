@@ -7,6 +7,7 @@ const phaseColors: Record<string, string> = {
   BLOCK_WINDOW: "var(--colors-pink)",
   BLOCK_CHALLENGE_WINDOW: "var(--colors-red)",
   DISCARD_INFLUENCE: "var(--colors-red)",
+  EXCHANGE_SELECTION: "var(--colors-green)",
   GAME_OVER: "var(--colors-yellow)",
 };
 

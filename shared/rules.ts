@@ -1,4 +1,4 @@
-import { Character, PlayerActionType } from "./types";
+import type { Character, PlayerActionType } from "./types";
 
 export interface ActionConfig {
   challengeable: boolean;
