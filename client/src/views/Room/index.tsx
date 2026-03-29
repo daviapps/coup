@@ -7,8 +7,9 @@ import {
 } from "@/features/classic-coup";
 import { useGame } from "@/features/classic-coup";
 import { ChatEntryItem } from "@/features/classic-coup/components/Chat";
+import { Room3d } from "./Room3d";
 import { useLocalState } from "@daviapps/react-utils";
-import { LockIcon, MessageCircleIcon, XIcon } from "lucide-react";
+import { BoxIcon, LockIcon, MessageCircleIcon, MonitorIcon, XIcon } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Navigate, useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
@@ -156,6 +157,7 @@ function RoomContent() {
   const { state, sendChatMessage, socketId } = useGame();
   const { t } = useTranslation();
   const [chatOpen, setChatOpen] = useState(false);
+  const [view3d, setView3d] = useState(false);
   const [lastSeenCount, setLastSeenCount] = useState(0);
   const [message, setMessage] = useState("");
   const [target, setTarget] = useState<string | undefined>(undefined);
@@ -187,12 +189,27 @@ function RoomContent() {
     }
   };
 
+  if (view3d) {
+    return (
+      <div style={{ width: "100%", height: "100%", position: "relative" }}>
+        <Room3d />
+        <S.ViewToggle onClick={() => setView3d(false)}>
+          <MonitorIcon /> 2D
+        </S.ViewToggle>
+      </div>
+    );
+  }
+
   return (
     <S.Wrapper>
       <GameBoard />
       <PlayerCards />
       <Chat />
       <StatusBar />
+
+      <S.ViewToggle onClick={() => setView3d(true)}>
+        <BoxIcon /> 3D
+      </S.ViewToggle>
 
       <S.MobileChatToggle
         data-open={String(chatOpen)}
