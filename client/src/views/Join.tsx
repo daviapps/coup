@@ -1,4 +1,4 @@
-import { FormEventHandler, useCallback, useEffect, useState } from "react";
+import { type FormEventHandler, useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useNavigate } from "react-router-dom";
 import api from "../services/api";
@@ -72,6 +72,7 @@ export default function Join() {
             placeholder={t("global_fields.room_id.placeholder") || ""}
             maxLength={4}
             type="text"
+            // @ts-ignore
             onChange={(e) =>
               setRoomId(
                 e.target.value.toUpperCase().replace(/[^\da-zA-Z]+/g, ""),
@@ -90,6 +91,7 @@ export default function Join() {
             required
             type="text"
             placeholder={t("global_fields.username.placeholder") || ""}
+            // @ts-ignore
             onChange={(e) => setUsername(e.target.value)}
           />
         </S.FieldGroup>
@@ -103,6 +105,7 @@ export default function Join() {
             value={password}
             type="password"
             placeholder={t("global_fields.password.placeholder") || ""}
+            // @ts-ignore
             onChange={(e) => setPassword(e.target.value)}
           />
         </S.FieldGroup>

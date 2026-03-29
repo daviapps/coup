@@ -8,6 +8,7 @@ import {
   PlayerBlockEventPayload,
   PlayerChallengeEventPayload,
   PlayerDiscardEventPayload,
+  PlayerExchangeEventPayload,
   PlayerDisconnectedEventData,
   PlayerJoinedEventData,
   PlayerJoinEventPayload,
@@ -38,6 +39,7 @@ type SocketContextState = {
   block: (payload: PlayerBlockEventPayload) => void;
   challenge: (payload: PlayerChallengeEventPayload) => void;
   discard: (payload: PlayerDiscardEventPayload) => void;
+  exchange: (payload: PlayerExchangeEventPayload) => void;
   sendChatMessage: (message: string, targetUsername?: string) => void;
   socketId: string;
   myTurn: boolean;
@@ -179,6 +181,13 @@ export function SocketProvider({
     [socket],
   );
 
+  const handleExchange = useCallback<SocketContextState["exchange"]>(
+    (payload) => {
+      socket?.emit("player:exchange", payload);
+    },
+    [socket],
+  );
+
   const handleSendChatMessage = useCallback<
     SocketContextState["sendChatMessage"]
   >(
@@ -204,6 +213,7 @@ export function SocketProvider({
         block: handleBlock,
         challenge: handleChallenge,
         discard: handleDiscard,
+        exchange: handleExchange,
         sendChatMessage: handleSendChatMessage,
       }}
     >

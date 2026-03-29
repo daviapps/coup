@@ -125,6 +125,56 @@ export const MobileChatInput = styled.div`
   border-top: 1px solid var(--colors-current-line);
 `;
 
+export const Hud3d = styled.div`
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  display: flex;
+  flex-direction: column;
+  z-index: 5;
+`;
+
+export const HudTop = styled.div`
+  pointer-events: auto;
+`;
+
+export const HudCenter = styled.div`
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: auto;
+`;
+
+export const ViewToggle = styled.button`
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  z-index: 11;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--colors-current-line);
+  background: rgba(40, 42, 54, 0.85);
+  color: var(--colors-foreground);
+  font-size: 12px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: border-color 0.2s, background-color 0.2s;
+
+  svg {
+    width: 14px;
+    height: 14px;
+  }
+
+  &:hover {
+    border-color: var(--colors-primary);
+    background: rgba(40, 42, 54, 1);
+  }
+`;
+
 const fadeIn = keyframes`
   from { opacity: 0; transform: translateY(16px); }
   to { opacity: 1; transform: translateY(0); }

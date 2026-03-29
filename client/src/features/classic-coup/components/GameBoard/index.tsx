@@ -37,7 +37,7 @@ export function GameBoard() {
     join();
   }, [join, navigate]);
 
-  const phaseKey = `${state.phase}-${state.pendingAction?.blockedBy ?? ""}-${state.victimId ?? ""}`;
+  const phaseKey = `${state.phase}-${state.currentTurn}-${state.pendingAction?.blockedBy ?? ""}-${state.victimId ?? ""}`;
 
   const currentTurnPlayer = state.players.find(
     (p) => p.id === state.currentTurn,
@@ -69,6 +69,7 @@ export function GameBoard() {
               })}
             </S.WaitingLabel>
           )}
+          <Countdown key="action-selection" duration={20} />
         </S.Container>
       )}
 
@@ -132,6 +133,14 @@ export function GameBoard() {
         <S.Container key={phaseKey}>
           {eliminated && <SpectatorBadge />}
           <DiscardInfluence />
+        </S.Container>
+      )}
+
+      {state.phase === "EXCHANGE_SELECTION" && (
+        <S.Container key={phaseKey}>
+          {eliminated && <SpectatorBadge />}
+          <ExchangeSelection />
+          <Countdown key="exchange" duration={20} />
         </S.Container>
       )}
 
@@ -227,7 +236,6 @@ function ActionSelection() {
     <Fragment>
       {Object.entries(GAME_ACTIONS)
         .filter(([key]) => {
-          if (key === "EXCHANGE") return false;
           if (mustCoup) return key === "COUP";
           const config = GAME_ACTIONS[key as PlayerActionType];
           if (config.cost > 0 && (currentPlayer?.coins ?? 0) < config.cost)
@@ -342,6 +350,77 @@ function DiscardInfluence() {
           </Button>
         ),
       )}
+    </Fragment>
+  );
+}
+
+function ExchangeSelection() {
+  const { exchange, state, socketId } = useGame();
+  const { t } = useTranslation();
+  const [selected, setSelected] = useState<number[]>([]);
+
+  const isActor = state.pendingAction?.actorId === socketId;
+  const currentPlayer = state.players.find((p) => p.id === socketId);
+
+  if (!isActor) {
+    const actor = state.players.find(
+      (p) => p.id === state.pendingAction?.actorId,
+    );
+    return (
+      <S.WaitingLabel>
+        {t("game.waiting_exchange", { player: actor?.username })}
+      </S.WaitingLabel>
+    );
+  }
+
+  const unrevealedCards =
+    currentPlayer?.cards
+      .map((card, index) => ({ card, index }))
+      .filter((e) => !e.card.revealed) ?? [];
+
+  const toggleCard = (index: number) => {
+    setSelected((prev) =>
+      prev.includes(index)
+        ? prev.filter((i) => i !== index)
+        : prev.length < 2
+          ? [...prev, index]
+          : prev,
+    );
+  };
+
+  const handleConfirm = () => {
+    if (selected.length === 2) {
+      exchange({ returnIndices: selected });
+    }
+  };
+
+  return (
+    <Fragment>
+      <S.PhaseLabel>{t("game.exchange_prompt")}</S.PhaseLabel>
+      <div
+        style={{
+          display: "flex",
+          gap: 8,
+          flexWrap: "wrap",
+          justifyContent: "center",
+        }}
+      >
+        {unrevealedCards.map(({ card, index }) => (
+          <Button
+            key={index}
+            onClick={() => toggleCard(index)}
+            variant={selected.includes(index) ? "default" : "link"}
+          >
+            {card.type ? t(`game.character.${card.type}`) : "???"}
+          </Button>
+        ))}
+      </div>
+      <S.PhaseLabel>
+        {t("game.exchange_selected", { count: selected.length })}
+      </S.PhaseLabel>
+      <Button onClick={handleConfirm} disabled={selected.length !== 2}>
+        {t("game.exchange_confirm")}
+      </Button>
     </Fragment>
   );
 }

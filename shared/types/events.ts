@@ -24,6 +24,10 @@ export type ChatMessageEventPayload = {
   targetUsername?: string;
 };
 
+export type PlayerExchangeEventPayload = {
+  returnIndices: number[];
+};
+
 export type PlayerChallengeEventPayload = {
   challenge: boolean;
 };

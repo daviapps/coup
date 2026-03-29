@@ -101,6 +101,10 @@
     "passed": "Passed",
     "passed_block": "Passed on blocking",
     "choose_card": "Choose a card to lose:",
+    "waiting_exchange": "Waiting {{player}} to exchange...",
+    "exchange_prompt": "Select 2 cards to return:",
+    "exchange_selected": "{{count}}/2 selected",
+    "exchange_confirm": "Confirm exchange",
     "coins_one": "{{count}} coin",
     "coins_other": "{{count}} coins",
     "cost": "({{count}} coins)",
@@ -129,6 +133,7 @@
       "BLOCK_WINDOW": "Block Window",
       "BLOCK_CHALLENGE_WINDOW": "Block Challenge",
       "DISCARD_INFLUENCE": "Discard Influence",
+      "EXCHANGE_SELECTION": "Exchange Cards",
       "GAME_OVER": "Game Over"
     }
   },

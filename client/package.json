@@ -13,6 +13,9 @@
     "@coup/shared": "*",
     "@daviapps/node-utils": "^0.0.1",
     "@daviapps/react-utils": "^0.0.21",
+    "@react-three/drei": "^10.7.7",
+    "@react-three/fiber": "^9.5.0",
+    "@types/three": "^0.183.1",
     "axios": "^1.13.6",
     "i18next": "^22.4.15",
     "i18next-http-backend": "^2.2.0",
@@ -26,6 +29,7 @@
     "react-toastify": "^11.0.5",
     "socket.io-client": "^4.6.1",
     "styled-components": "^6.3.11",
+    "three": "^0.183.2",
     "zod": "^4.3.6"
   },
   "devDependencies": {
